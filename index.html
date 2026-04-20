@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MEDIDAS VILAREJO PRO 8.2</title>
+    <title>MEDIDAS VILAREJO PRO 8.3</title>
     
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
@@ -101,7 +101,7 @@
 <body>
 
     <div class="cabecalho">
-        <h1><span class="material-symbols-outlined" style="font-size: 24px;">architecture</span> VILAREJO PRO 8.2</h1>
+        <h1><span class="material-symbols-outlined" style="font-size: 24px;">architecture</span> VILAREJO PRO 8.3</h1>
     </div>
 
     <div class="cartao" id="painelPrincipal">
@@ -158,7 +158,7 @@
             <div class="area-desenho-container">
                 <div class="instrucao-canvas">
                     <span class="material-symbols-outlined" style="font-size: 16px;">touch_app</span> 
-                    TOQUE EM (P) PORTAS OU (J) JANELAS
+                    TOQUE EM (P) OU (J) PARA INSERIR
                 </div>
                 <canvas id="telaInterativa"></canvas>
             </div>
@@ -284,8 +284,6 @@
         let idEditando = null;
         let paredesAtivasVista = [];
         let indexVistaAtual = 0;
-        
-        // Controle de Atraso (Debounce) para parar o travamento
         let timerDigitacao = null;
 
         window.onload = function() {
@@ -331,15 +329,13 @@
             }
         };
 
-        // --- SISTEMA DE ATRASO (DEBOUNCE) PARA FLUIDEZ ---
         window.agendarAtualizacao = function() {
             clearTimeout(timerDigitacao);
             timerDigitacao = setTimeout(() => {
                 window.atualizarPlantaEditavel();
-            }, 400); // Aguarda 400ms após o usuário parar de digitar
+            }, 400); 
         };
 
-        // --- GESTÃO DA PLANTA E VISTAS ---
         window.atualizarPlantaEditavel = function() {
             rascunho.larg = parseFloat(document.getElementById('campoLargura').value) || 0;
             rascunho.comp = parseFloat(document.getElementById('campoComprimento').value) || 0;
@@ -467,18 +463,26 @@
 
             pontosTouch = [];
             let dOff = 0.3 * escala; 
-            pontosTouch.push({ id: 'P', parede: 'A', posLabel: 'INICIO', x: cX + boneca + dOff, y: cY });
-            pontosTouch.push({ id: 'J', parede: 'A', posLabel: 'MEIO', x: cX + L*0.5, y: cY });
-            pontosTouch.push({ id: 'P', parede: 'A', posLabel: 'FIM', x: cX + L - boneca - dOff, y: cY });
-            pontosTouch.push({ id: 'P', parede: 'B', posLabel: 'INICIO', x: cX + L, y: cY + boneca + dOff });
-            pontosTouch.push({ id: 'J', parede: 'B', posLabel: 'MEIO', x: cX + L, y: cY + C*0.5 });
-            pontosTouch.push({ id: 'P', parede: 'B', posLabel: 'FIM', x: cX + L, y: cY + C - boneca - dOff });
-            pontosTouch.push({ id: 'P', parede: 'C', posLabel: 'INICIO', x: cX + boneca + dOff, y: cY + C });
-            pontosTouch.push({ id: 'J', parede: 'C', posLabel: 'MEIO', x: cX + L*0.5, y: cY + C });
-            pontosTouch.push({ id: 'P', parede: 'C', posLabel: 'FIM', x: cX + L - boneca - dOff, y: cY + C });
-            pontosTouch.push({ id: 'P', parede: 'D', posLabel: 'INICIO', x: cX, y: cY + boneca + dOff });
-            pontosTouch.push({ id: 'J', parede: 'D', posLabel: 'MEIO', x: cX, y: cY + C*0.5 });
-            pontosTouch.push({ id: 'P', parede: 'D', posLabel: 'FIM', x: cX, y: cY + C - boneca - dOff });
+
+            // Função auxiliar para verificar se já existe um vão neste ponto
+            const temVao = (par, pos) => dados.vaos.some(v => v.parede === par && v.posLabel === pos);
+
+            // Só insere o ponto interativo se NÃO houver vão nele
+            if(!temVao('A', 'INICIO')) pontosTouch.push({ id: 'P', parede: 'A', posLabel: 'INICIO', x: cX + boneca + dOff, y: cY });
+            if(!temVao('A', 'MEIO'))   pontosTouch.push({ id: 'J', parede: 'A', posLabel: 'MEIO', x: cX + L*0.5, y: cY });
+            if(!temVao('A', 'FIM'))    pontosTouch.push({ id: 'P', parede: 'A', posLabel: 'FIM', x: cX + L - boneca - dOff, y: cY });
+            
+            if(!temVao('B', 'INICIO')) pontosTouch.push({ id: 'P', parede: 'B', posLabel: 'INICIO', x: cX + L, y: cY + boneca + dOff });
+            if(!temVao('B', 'MEIO'))   pontosTouch.push({ id: 'J', parede: 'B', posLabel: 'MEIO', x: cX + L, y: cY + C*0.5 });
+            if(!temVao('B', 'FIM'))    pontosTouch.push({ id: 'P', parede: 'B', posLabel: 'FIM', x: cX + L, y: cY + C - boneca - dOff });
+            
+            if(!temVao('C', 'INICIO')) pontosTouch.push({ id: 'P', parede: 'C', posLabel: 'INICIO', x: cX + boneca + dOff, y: cY + C });
+            if(!temVao('C', 'MEIO'))   pontosTouch.push({ id: 'J', parede: 'C', posLabel: 'MEIO', x: cX + L*0.5, y: cY + C });
+            if(!temVao('C', 'FIM'))    pontosTouch.push({ id: 'P', parede: 'C', posLabel: 'FIM', x: cX + L - boneca - dOff, y: cY + C });
+            
+            if(!temVao('D', 'INICIO')) pontosTouch.push({ id: 'P', parede: 'D', posLabel: 'INICIO', x: cX, y: cY + boneca + dOff });
+            if(!temVao('D', 'MEIO'))   pontosTouch.push({ id: 'J', parede: 'D', posLabel: 'MEIO', x: cX, y: cY + C*0.5 });
+            if(!temVao('D', 'FIM'))    pontosTouch.push({ id: 'P', parede: 'D', posLabel: 'FIM', x: cX, y: cY + C - boneca - dOff });
 
             ctx.font = 'bold 12px Arial';
             ctx.textAlign = 'center';
@@ -721,12 +725,10 @@
             let fPar = (tCalc === 'PAREDE' || tCalc === 'AMBOS') ? Math.max(0, aPar - dPar) : 0;
             let fRod = Math.max(0, per - dRod);
 
-            // REGRA DE NEGÓCIO: Banheiro e Cozinha não tem rodapé
             if (base === 'BANHEIRO' || base === 'COZINHA') {
                 fRod = 0;
             }
 
-            // APLICAR MARGEM DE QUEBRA
             let pPiso = fPiso * (1 + margem/100);
             let pPar = fPar * (1 + margem/100);
             let pRod = fRod * (1 + margem/100);
