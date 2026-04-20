@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MEDIDAS VILAREJO PRO 8.0</title>
+    <title>MEDIDAS VILAREJO PRO 8.1</title>
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
     <style>
         :root {
             --cor-principal: #003366;
@@ -13,14 +16,15 @@
             --cor-texto: #333333;
             --cor-alerta: #D9534F;
             --cor-sucesso: #5CB85C;
+            --cor-borda: #E1E8ED;
         }
 
         body { font-family: 'Segoe UI', Roboto, Arial, sans-serif; margin: 0; padding: 10px; background-color: var(--cor-fundo); color: var(--cor-texto); padding-bottom: 90px; }
         
         .cabecalho { text-align: center; margin-bottom: 15px; padding: 10px 0; border-bottom: 2px solid var(--cor-principal); }
-        .cabecalho h1 { font-size: 1.3rem; color: var(--cor-principal); margin: 0; font-weight: 800; }
+        .cabecalho h1 { font-size: 1.3rem; color: var(--cor-principal); margin: 0; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px;}
 
-        .cartao { background: var(--cor-cartao); padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid #E1E8ED; }
+        .cartao { background: var(--cor-cartao); padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.06); margin-bottom: 15px; border: 1px solid var(--cor-borda); }
         h2 { font-size: 1.1rem; margin-top: 0; color: var(--cor-principal); border-bottom: 1px solid #EEE; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;}
 
         .grupo-campo { margin-bottom: 12px; }
@@ -28,34 +32,45 @@
         .coluna { flex: 1; }
         
         label { display: block; font-size: 0.75rem; color: #555; margin-bottom: 5px; font-weight: bold; text-transform: uppercase;}
-        input[type="text"], input[type="number"], select { width: 100%; padding: 14px; border: 1px solid #CCD6DD; border-radius: 6px; box-sizing: border-box; font-size: 1rem; background-color: #FAFAFA; -webkit-appearance: none; }
+        input[type="text"], input[type="number"], select { width: 100%; padding: 14px; border: 1px solid #CCD6DD; border-radius: 8px; box-sizing: border-box; font-size: 1rem; background-color: #FAFAFA; -webkit-appearance: none; transition: border-color 0.2s;}
         input[type="text"] { text-transform: uppercase; }
+        input:focus, select:focus { border-color: var(--cor-secundaria); outline: none; background-color: #FFF; box-shadow: 0 0 0 3px rgba(0,85,164,0.1);}
 
-        button { width: 100%; padding: 14px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; text-transform: uppercase; margin-top: 10px;}
+        /* Botões Base */
+        button { width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; text-transform: uppercase; margin-top: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; transition: transform 0.1s, filter 0.2s;}
+        button:active { transform: scale(0.98); filter: brightness(0.9);}
+        
         .botao-principal { background-color: var(--cor-principal); color: white; }
         .botao-sucesso { background-color: var(--cor-sucesso); color: white; }
         .botao-fechar { background-color: #6c757d; color: white; }
-        .botao-perigo { background-color: var(--cor-alerta); color: white; padding: 6px 10px; font-size: 0.8rem; width: auto; margin:0;}
-        .botao-editar { background-color: #FF9800; color: white; padding: 6px 10px; font-size: 0.8rem; width: auto; margin:0; margin-right: 5px;}
+        
+        /* Botões de Ação (Ícones) */
+        .acoes-lista { display: flex; gap: 8px; }
+        .botao-icone { width: 36px; height: 36px; padding: 0; border-radius: 6px; color: white; margin: 0; display: flex; justify-content: center; align-items: center;}
+        .botao-icone.edit { background-color: #FF9800; }
+        .botao-icone.delete { background-color: var(--cor-alerta); }
+        .material-symbols-outlined { font-size: 20px; }
 
         /* Select e Botão + */
         .select-container { display: flex; gap: 8px; align-items: center; }
-        .btn-add-ambiente { width: 50px; height: 48px; padding: 0; font-size: 1.8rem; border: 2px solid var(--cor-secundaria); background: #FFF; color: var(--cor-secundaria); border-radius: 6px; margin: 0;}
+        .btn-add-ambiente { width: 50px; height: 48px; padding: 0; font-size: 1.5rem; border: 2px dashed var(--cor-secundaria); background: #F0F4F8; color: var(--cor-secundaria); border-radius: 8px; margin: 0;}
 
-        /* Canvas Seguro */
-        .area-desenho-container { width: 100%; text-align: center; margin-top: 15px; background: #FFF; border: 2px solid #E1E8ED; border-radius: 6px; overflow: hidden; position: relative;}
+        /* Canvas Geral */
+        .area-desenho-container { width: 100%; text-align: center; margin-top: 15px; background: #FFF; border: 2px solid var(--cor-borda); border-radius: 8px; overflow: hidden; position: relative;}
         canvas { margin: 0 auto; display: block; touch-action: none; background-image: radial-gradient(#E1E8ED 1px, transparent 1px); background-size: 20px 20px; width: 100%;}
-        .instrucao-canvas { font-size: 0.8rem; color: #FFF; padding: 10px; background: var(--cor-secundaria); font-weight: bold;}
+        .instrucao-canvas { font-size: 0.8rem; color: #FFF; padding: 10px; background: var(--cor-secundaria); font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 6px;}
 
-        /* Vistas (Elevações) */
-        .painel-vistas { margin-top: 15px; display: flex; flex-direction: column; gap: 15px; }
-        .vista-item { background: #FFF; border: 1px solid #DDD; border-radius: 6px; padding: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
-        .vista-titulo { font-size: 0.8rem; color: var(--cor-principal); font-weight: bold; margin-bottom: 10px; text-align: center;}
-        .canvas-vista { width: 100%; max-width: 100%; background: #FAFAFA; border: 1px solid #EEE;}
-
+        /* CARROSSEL DE VISTAS */
+        .carrossel-vistas { margin-top: 15px; background: #FFF; border: 2px solid var(--cor-borda); border-radius: 8px; overflow: hidden; }
+        .carrossel-header { display: flex; justify-content: space-between; align-items: center; background: #F8F9FA; padding: 8px 10px; border-bottom: 1px solid var(--cor-borda);}
+        .carrossel-titulo { font-size: 0.85rem; font-weight: bold; color: var(--cor-principal);}
+        .btn-nav-vista { background: none; border: none; padding: 5px; color: var(--cor-secundaria); margin: 0; width: auto; border-radius: 50%;}
+        .btn-nav-vista:active { background: #E1E8ED;}
+        .btn-nav-vista .material-symbols-outlined { font-size: 24px; }
+        
         /* Modais */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; padding: 15px; box-sizing: border-box;}
-        .modal-conteudo { background: #FFF; padding: 20px; border-radius: 8px; width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto;}
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,30,60,0.8); z-index: 2000; justify-content: center; align-items: center; padding: 15px; box-sizing: border-box;}
+        .modal-conteudo { background: #FFF; padding: 20px; border-radius: 12px; width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto;}
 
         /* UI Porta */
         .seletor-abertura { background: #F8F9FA; padding: 12px; border-radius: 8px; border: 1px solid #DDD; margin-bottom: 15px; text-align: center; }
@@ -66,17 +81,17 @@
         .img-abertura { height: 75px; object-fit: contain; border-radius: 4px;}
 
         /* Lista Rascunho */
-        .item-rascunho-vao { background: #FFF; padding: 10px; margin-top: 8px; border-left: 4px solid var(--cor-secundaria); display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .item-rascunho-vao { background: #FFF; padding: 12px; margin-top: 10px; border-left: 4px solid var(--cor-secundaria); display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid var(--cor-borda);}
         .detalhe-vao-texto { display: flex; flex-direction: column; gap: 3px; }
 
         /* Rodapé Fixo */
-        .rodape-totais { position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--cor-principal); color: white; padding: 12px 5px; box-shadow: 0 -4px 10px rgba(0,0,0,0.15); box-sizing: border-box; display: grid; grid-template-columns: 1fr 1fr 1fr; text-align: center; z-index: 1000; }
+        .rodape-totais { position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--cor-principal); color: white; padding: 12px 5px; box-shadow: 0 -4px 15px rgba(0,0,0,0.2); box-sizing: border-box; display: grid; grid-template-columns: 1fr 1fr 1fr; text-align: center; z-index: 1000; }
         .bloco-total { border-right: 1px solid rgba(255,255,255,0.2); padding: 0 5px;}
         .bloco-total:last-child { border-right: none; }
-        .valor-total { display: block; font-size: 1rem; font-weight: bold; }
+        .valor-total { display: block; font-size: 1.1rem; font-weight: bold; }
         .rotulo-total { display: block; font-size: 0.55rem; opacity: 0.9; text-transform: uppercase; margin-top: 2px; }
         
-        .destaque-medida { font-size: 0.95rem; font-weight: bold; display: block; margin-top: 5px; padding: 8px; border-radius: 4px;}
+        .destaque-medida { font-size: 0.95rem; font-weight: bold; display: block; margin-top: 5px; padding: 8px; border-radius: 6px;}
         .destaque-piso { background: #E8F0FE; color: var(--cor-principal); border-left: 4px solid var(--cor-principal);}
         .destaque-parede { background: #E8F5E9; color: #2E7D32; border-left: 4px solid #2E7D32;}
         .destaque-rodape { background: #FFF3E0; color: #E65100; border-left: 4px solid #E65100; margin-top: 5px;}
@@ -85,7 +100,7 @@
 <body>
 
     <div class="cabecalho">
-        <h1>SISTEMA DE MEDIDAS PRO 8.0</h1>
+        <h1><span class="material-symbols-outlined" style="font-size: 24px;">architecture</span> VILAREJO PRO 8.1</h1>
     </div>
 
     <div class="cartao" id="painelPrincipal">
@@ -96,7 +111,9 @@
                 <label>AMBIENTE BASE</label>
                 <div class="select-container">
                     <select id="campoAmbienteBase" style="flex: 1;"></select>
-                    <button type="button" class="btn-add-ambiente" onclick="abrirModalNovoAmbiente()">+</button>
+                    <button type="button" class="btn-add-ambiente" onclick="abrirModalNovoAmbiente()">
+                        <span class="material-symbols-outlined">add</span>
+                    </button>
                 </div>
             </div>
             <div class="grupo-campo coluna" style="flex: 1;">
@@ -132,17 +149,33 @@
         <div id="blocoVisual" style="display:none;">
             
             <div class="area-desenho-container">
-                <div class="instrucao-canvas">👇 TOQUE EM (P) PORTAS OU (J) JANELAS</div>
+                <div class="instrucao-canvas">
+                    <span class="material-symbols-outlined" style="font-size: 16px;">touch_app</span> 
+                    TOQUE EM (P) PORTAS OU (J) JANELAS
+                </div>
                 <canvas id="telaInterativa"></canvas>
             </div>
 
-            <div class="painel-vistas" id="painelVistas"></div>
+            <div class="carrossel-vistas" id="containerVistas" style="display:none;">
+                <div class="carrossel-header">
+                    <button type="button" class="btn-nav-vista" onclick="navegarVista(-1)">
+                        <span class="material-symbols-outlined">chevron_left</span>
+                    </button>
+                    <span id="tituloVistaAtual" class="carrossel-titulo">VISTA PAREDE B</span>
+                    <button type="button" class="btn-nav-vista" onclick="navegarVista(1)">
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </button>
+                </div>
+                <canvas id="telaVistaInterativa" style="width: 100%; display: block;"></canvas>
+            </div>
 
             <div id="listaVaosRascunho" style="margin-top: 15px;"></div>
             
         </div>
 
-        <button class="botao-principal" onclick="salvarAmbienteFinal()" id="btnSalvarAmbiente">SALVAR AMBIENTE</button>
+        <button class="botao-principal" onclick="salvarAmbienteFinal()" id="btnSalvarAmbiente">
+            <span class="material-symbols-outlined">save</span> SALVAR AMBIENTE
+        </button>
         <button class="botao-fechar" onclick="cancelarEdicao()" id="btnCancelarEdicao" style="display:none;">CANCELAR EDIÇÃO</button>
     </div>
 
@@ -242,6 +275,10 @@
         let bdTipos = ["BANHEIRO", "COZINHA", "HALL", "QUARTO", "SALA", "ÁREA DE SERVIÇO"];
         let pontosTouch = [];
         let idEditando = null;
+        
+        // Estado do Carrossel de Vistas
+        let paredesAtivasVista = [];
+        let indexVistaAtual = 0;
 
         window.onload = function() {
             try {
@@ -256,7 +293,6 @@
             renderizarListaSalva();
         };
 
-        // --- GESTÃO DE TIPOS DE AMBIENTES ---
         function renderizarSelect(selecionado = null) {
             const sel = document.getElementById('campoAmbienteBase');
             sel.innerHTML = "";
@@ -298,7 +334,7 @@
                 
                 requestAnimationFrame(() => {
                     desenharPlantaBaixa(rascunho);
-                    desenharVistas(rascunho);
+                    gerenciarCarrosselVistas();
                 });
                 
                 listarVaos();
@@ -312,17 +348,15 @@
             const ctx = canvas.getContext('2d');
             const container = canvas.parentElement;
             
-            // CORREÇÃO DO ESMAGAMENTO: Usa a largura total disponível no card
             const containerW = container.clientWidth; 
             
             canvas.width = containerW; 
-            canvas.height = canvas.width * 0.8; // Proporção mais horizontal
+            canvas.height = canvas.width * 0.8; 
 
             const W = canvas.width;
             const H = canvas.height;
             ctx.clearRect(0, 0, W, H);
 
-            // Margem dinâmica (15% da largura) - Isso evita que a margem engula a tela em celulares pequenos
             const margemX = W * 0.15;
             const margemY = H * 0.15;
             
@@ -337,7 +371,6 @@
 
             const boneca = 0.10 * escala;
 
-            // Paredes
             ctx.strokeStyle = '#4A4A4A';
             ctx.lineWidth = 6;
             ctx.strokeRect(cX, cY, L, C);
@@ -419,7 +452,6 @@
                 });
             }
 
-            // Balões
             pontosTouch = [];
             let dOff = 0.3 * escala; 
             pontosTouch.push({ id: 'P', parede: 'A', posLabel: 'INICIO', x: cX + boneca + dOff, y: cY });
@@ -452,110 +484,143 @@
             });
         }
 
-        // --- NOVA FUNÇÃO: DESENHO DAS VISTAS (ELEVAÇÕES) ---
-        function desenharVistas(dados) {
-            const painelVistas = document.getElementById('painelVistas');
-            painelVistas.innerHTML = '';
-
-            const paredesComVao = ['A', 'B', 'C', 'D'].filter(p => dados.vaos.some(v => v.parede === p));
-
-            if(paredesComVao.length > 0) {
-                paredesComVao.forEach(parede => {
-                    // Cria os elementos no HTML
-                    const divItem = document.createElement('div');
-                    divItem.className = 'vista-item';
-                    
-                    const titulo = document.createElement('div');
-                    titulo.className = 'vista-titulo';
-                    titulo.innerText = `VISTA PAREDE ${parede}`;
-                    
-                    const canvasVista = document.createElement('canvas');
-                    canvasVista.className = 'canvas-vista';
-                    
-                    divItem.appendChild(titulo);
-                    divItem.appendChild(canvasVista);
-                    painelVistas.appendChild(divItem);
-
-                    // Desenha no Canvas
-                    const ctx = canvasVista.getContext('2d');
-                    const compParede = (parede === 'A' || parede === 'C') ? dados.larg : dados.comp;
-                    const altParede = dados.alt;
-
-                    // Setup responsivo
-                    const W = painelVistas.clientWidth - 20; // largura interna
-                    canvasVista.width = W;
-                    // Altura proporcional à parede real + margens
-                    const esc = (W - 40) / compParede; 
-                    canvasVista.height = (altParede * esc) + 40; 
-                    const H = canvasVista.height;
-
-                    ctx.clearRect(0,0, W, H);
-
-                    // Desenha o limite da Parede
-                    ctx.strokeStyle = '#4A4A4A';
-                    ctx.lineWidth = 4;
-                    ctx.strokeRect(20, 20, compParede * esc, altParede * esc);
-
-                    // Chão (Linha grossa)
-                    ctx.beginPath();
-                    ctx.moveTo(10, 20 + altParede * esc);
-                    ctx.lineTo(W - 10, 20 + altParede * esc);
-                    ctx.lineWidth = 4;
-                    ctx.stroke();
-                    
-                    // Cota Pé Direito
-                    ctx.fillStyle = '#D9534F';
-                    ctx.font = '10px Arial';
-                    ctx.fillText(`Pé Direito: ${altParede.toFixed(2)}m`, W - 50, H / 2);
-
-                    // Desenhar os vãos dessa parede
-                    const vaosParede = dados.vaos.filter(v => v.parede === parede);
-                    vaosParede.forEach(v => {
-                        let px;
-                        const bonecaVista = 0.10 * esc;
-                        const tv = v.larg * esc;
-                        
-                        if (v.posLabel === 'INICIO') px = 20 + bonecaVista;
-                        else if (v.posLabel === 'FIM') px = 20 + (compParede * esc) - bonecaVista - tv;
-                        else px = 20 + ((compParede * esc) - tv) / 2;
-
-                        let py;
-                        if (v.tipo === 'PORTA') {
-                            py = 20 + (altParede * esc) - (v.alt * esc);
-                            ctx.fillStyle = '#E8F0FE';
-                            ctx.fillRect(px, py, tv, v.alt * esc);
-                            ctx.strokeStyle = '#007BFF';
-                            ctx.lineWidth = 2;
-                            ctx.strokeRect(px, py, tv, v.alt * esc);
-                            
-                            ctx.fillStyle = '#003366';
-                            ctx.fillText(`Porta`, px + tv/2, py + (v.alt*esc)/2);
-                            ctx.fillText(`${v.larg}x${v.alt}`, px + tv/2, py + (v.alt*esc)/2 + 12);
-                            
-                        } else {
-                            // Janela: Alinha o topo padrão em 2.10m ou centraliza
-                            let topo = altParede >= 2.10 ? 2.10 : altParede - 0.1;
-                            py = 20 + (altParede * esc) - (topo * esc);
-                            
-                            ctx.fillStyle = '#E8F5E9';
-                            ctx.fillRect(px, py, tv, v.alt * esc);
-                            ctx.strokeStyle = '#28A745';
-                            ctx.lineWidth = 2;
-                            ctx.strokeRect(px, py, tv, v.alt * esc);
-
-                            ctx.fillStyle = '#003366';
-                            ctx.fillText(`Janela`, px + tv/2, py + (v.alt*esc)/2);
-                            ctx.fillText(`${v.larg}x${v.alt}`, px + tv/2, py + (v.alt*esc)/2 + 12);
-                        }
-                    });
-                });
+        // --- SISTEMA DE CARROSSEL DE VISTAS (ELEVAÇÃO COM COTAS) ---
+        function gerenciarCarrosselVistas() {
+            paredesAtivasVista = ['A', 'B', 'C', 'D'].filter(p => rascunho.vaos.some(v => v.parede === p));
+            
+            const containerVistas = document.getElementById('containerVistas');
+            if(paredesAtivasVista.length > 0) {
+                containerVistas.style.display = 'block';
+                // Garante que o index está dentro do limite
+                if(indexVistaAtual >= paredesAtivasVista.length) indexVistaAtual = 0;
+                desenharVistaAtual();
+            } else {
+                containerVistas.style.display = 'none';
             }
         }
 
-        // --- CLIQUES ---
+        function navegarVista(direcao) {
+            indexVistaAtual += direcao;
+            if (indexVistaAtual >= paredesAtivasVista.length) indexVistaAtual = 0;
+            if (indexVistaAtual < 0) indexVistaAtual = paredesAtivasVista.length - 1;
+            desenharVistaAtual();
+        }
+
+        function desenharCota(ctx, x1, y1, x2, y2, texto, horizontal) {
+            ctx.strokeStyle = '#D9534F'; // Linha Vermelha
+            ctx.fillStyle = '#D9534F';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+            ctx.stroke();
+
+            // Ticks (Marcações nas pontas)
+            ctx.beginPath();
+            if (horizontal) {
+                ctx.moveTo(x1, y1-4); ctx.lineTo(x1, y1+4);
+                ctx.moveTo(x2, y2-4); ctx.lineTo(x2, y2+4);
+                ctx.stroke();
+                ctx.font = 'bold 10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(texto, (x1+x2)/2, y1 - 6);
+            } else {
+                ctx.moveTo(x1-4, y1); ctx.lineTo(x1+4, y1);
+                ctx.moveTo(x2-4, y2); ctx.lineTo(x2+4, y2);
+                ctx.stroke();
+                ctx.font = 'bold 10px Arial';
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(texto, x1 + 6, (y1+y2)/2);
+            }
+        }
+
+        function desenharVistaAtual() {
+            const paredeAtual = paredesAtivasVista[indexVistaAtual];
+            document.getElementById('tituloVistaAtual').innerText = `VISTA PAREDE ${paredeAtual}`;
+
+            const canvasVista = document.getElementById('telaVistaInterativa');
+            const ctx = canvasVista.getContext('2d');
+            const container = canvasVista.parentElement;
+
+            const W = container.clientWidth;
+            canvasVista.width = W;
+
+            const compParede = (paredeAtual === 'A' || paredeAtual === 'C') ? rascunho.larg : rascunho.comp;
+            const altParede = rascunho.alt;
+
+            // Margem para as cotas caberem (Cima: cota vão, Esquerda/Direita: parede, Direita: Cota Altura)
+            const paddingBase = 40;
+            const esc = (W - 80) / compParede; // Sobra espaço para a cota lateral direita
+            
+            canvasVista.height = (altParede * esc) + 80; 
+            const H = canvasVista.height;
+
+            ctx.clearRect(0,0, W, H);
+
+            // Desenha a Parede (Retângulo principal)
+            const xStart = 30;
+            const yStart = 40; // Espaço em cima para a cota da porta
+            const xFim = xStart + (compParede * esc);
+            const yFim = yStart + (altParede * esc);
+
+            ctx.strokeStyle = '#4A4A4A';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(xStart, yStart, compParede * esc, altParede * esc);
+
+            // Chão Base
+            ctx.beginPath();
+            ctx.moveTo(10, yFim);
+            ctx.lineTo(W - 10, yFim);
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            // Cota do Pé Direito (Linha Vermelha lado Direito)
+            desenharCota(ctx, xFim + 15, yStart, xFim + 15, yFim, `${altParede.toFixed(2)}m`, false);
+
+            // Vãos dessa parede
+            const vaosParede = rascunho.vaos.filter(v => v.parede === paredeAtual);
+            
+            vaosParede.forEach(v => {
+                let px;
+                const bonecaVista = 0.10 * esc;
+                const tv = v.larg * esc;
+                const th = v.alt * esc;
+                
+                if (v.posLabel === 'INICIO') px = xStart + bonecaVista;
+                else if (v.posLabel === 'FIM') px = xFim - bonecaVista - tv;
+                else px = xStart + ((compParede * esc) - tv) / 2;
+
+                let py;
+                if (v.tipo === 'PORTA') {
+                    py = yFim - th;
+                    // Caixa da Porta
+                    ctx.fillStyle = '#E8F0FE'; ctx.fillRect(px, py, tv, th);
+                    ctx.strokeStyle = '#007BFF'; ctx.lineWidth = 2; ctx.strokeRect(px, py, tv, th);
+                    
+                    // Cota Largura (Topo)
+                    desenharCota(ctx, px, py - 10, px + tv, py - 10, v.larg.toFixed(2), true);
+                    // Cota Altura (Lado Direito da Porta)
+                    desenharCota(ctx, px + tv + 10, py, px + tv + 10, yFim, v.alt.toFixed(2), false);
+
+                } else {
+                    // Janela
+                    let topo = altParede >= 2.10 ? 2.10 : altParede - 0.1;
+                    py = yFim - (topo * esc);
+                    
+                    ctx.fillStyle = '#E8F5E9'; ctx.fillRect(px, py, tv, th);
+                    ctx.strokeStyle = '#28A745'; ctx.lineWidth = 2; ctx.strokeRect(px, py, tv, th);
+
+                    // Cota Largura (Topo)
+                    desenharCota(ctx, px, py - 10, px + tv, py - 10, v.larg.toFixed(2), true);
+                    // Cota Altura (Lado Direito)
+                    desenharCota(ctx, px + tv + 10, py, px + tv + 10, py + th, v.alt.toFixed(2), false);
+                }
+            });
+        }
+
+        // --- CLIQUES (CANVAS PRINCIPAL) ---
         document.getElementById('telaInterativa').addEventListener('click', function(e) {
             const rect = this.getBoundingClientRect();
-            // Ajuste fino para a precisão do clique levando em conta o tamanho do canvas na tela vs tamanho real
             const scaleX = this.width / rect.width;
             const scaleY = this.height / rect.height;
             const cx = (e.clientX - rect.left) * scaleX;
@@ -580,7 +645,7 @@
                             <span>${v.larg.toFixed(2)}m larg x ${v.alt.toFixed(2)}m alt</span>
                             ${det}
                         </div>
-                        <button class="botao-perigo" onclick="removerVao(${idx})">X</button>
+                        <button class="botao-icone delete" onclick="removerVao(${idx})"><span class="material-symbols-outlined">delete</span></button>
                     </div>`;
             });
         }
@@ -692,7 +757,7 @@
             rascunho = { larg: 0, comp: 0, alt: 0, vaos: [] };
             document.getElementById('tituloPainelPrincipal').innerText = "NOVO AMBIENTE";
             const btnS = document.getElementById('btnSalvarAmbiente');
-            btnS.innerText = "SALVAR AMBIENTE";
+            btnS.innerHTML = `<span class="material-symbols-outlined">save</span> SALVAR AMBIENTE`;
             btnS.classList.remove('botao-sucesso');
             btnS.classList.add('botao-principal');
             document.getElementById('btnCancelarEdicao').style.display = 'none';
@@ -723,9 +788,9 @@
                 painel.innerHTML += `
                     <div class="cartao">
                         <h2>${amb.nome} 
-                            <div>
-                                <button class="botao-editar" onclick="editarRegistro(${amb.id})">EDITAR</button>
-                                <button class="botao-perigo" onclick="deletarRegistro(${amb.id})">APAGAR</button>
+                            <div class="acoes-lista">
+                                <button class="botao-icone edit" onclick="editarRegistro(${amb.id})"><span class="material-symbols-outlined">edit</span></button>
+                                <button class="botao-icone delete" onclick="deletarRegistro(${amb.id})"><span class="material-symbols-outlined">delete</span></button>
                             </div>
                         </h2>
                         <div class="detalhes-ambiente">
@@ -755,7 +820,7 @@
 
             document.getElementById('tituloPainelPrincipal').innerText = "EDITANDO: " + p.nome;
             const bS = document.getElementById('btnSalvarAmbiente');
-            bS.innerText = "ATUALIZAR";
+            bS.innerHTML = `<span class="material-symbols-outlined">update</span> ATUALIZAR AMBIENTE`;
             bS.classList.replace('botao-principal', 'botao-sucesso');
             document.getElementById('btnCancelarEdicao').style.display = 'block';
 
