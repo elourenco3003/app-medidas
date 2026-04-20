@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MEDIDAS VILAREJO PRO 6.7</title>
+    <style>
+        :root {
+            --cor-principal: #003366;
+            --cor-secundaria: #0055A4;
+            --cor-fundo: #F0F4F8;
+            --cor-cartao: #FFFFFF;
+            --cor-texto: #333333;
+            --cor-alerta: #D9534F;
+            --cor-sucesso: #5CB85C;
+        }
+
+        body { font-family: 'Segoe UI', Roboto, Arial, sans-serif; margin: 0; padding: 10px; background-color: var(--cor-fundo); color: var(--cor-texto); padding-bottom: 90px; }
+        
+        .cabecalho { text-align: center; margin-bottom: 15px; padding: 10px 0; border-bottom: 2px solid var(--cor-principal); }
+        .cabecalho h1 { font-size: 1.3rem; color: var(--cor-principal); margin: 0; font-weight: 800; }
+
+        .cartao { background: var(--cor-cartao); padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid #E1E8ED; }
+        h2 { font-size: 1.1rem; margin-top: 0; color: var(--cor-principal); border-bottom: 1px solid #EEE; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;}
+
+        .grupo-campo { margin-bottom: 12px; }
+        .linha { display: flex; gap: 10px; }
+        .coluna { flex: 1; }
+        
+        label { display: block; font-size: 0.75rem; color: #555; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"] { text-transform: uppercase; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #CCD6DD; border-radius: 6px; box-sizing: border-box; font-size: 1rem; background-color: #FAFAFA; -webkit-appearance: none; }
+        input:focus, select:focus { border-color: var(--cor-secundaria); outline: none; background-color: #FFF; }
+
+        button { width: 100%; padding: 14px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; text-transform: uppercase; margin-top: 10px; transition: 0.2s;}
+        button:active { transform: scale(0.98); }
+        .botao-principal { background-color: var(--cor-principal); color: white; }
+        .botao-sucesso { background-color: var(--cor-sucesso); color: white; }
+        .botao-fechar { background-color: #6c757d; color: white; }
+        .botao-perigo { background-color: var(--cor-alerta); color: white; padding: 6px 10px; font-size: 0.8rem; width: auto; margin:0;}
+        .botao-editar { background-color: #FF9800; color: white; padding: 6px 10px; font-size: 0.8rem; width: auto; margin:0; margin-right: 5px;}
+
+        /* Select e Botão + */
+        .select-container { display: flex; gap: 8px; }
+        .btn-add-ambiente { width: 50px; height: 45px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; border: 2px solid var(--cor-secundaria); background: #FFF; color: var(--cor-secundaria); border-radius: 6px; margin-top: 0;}
+
+        /* Canvas Seguro */
+        .area-desenho-container { width: 100%; text-align: center; margin-top: 15px; background: #FFF; border: 2px solid #E1E8ED; border-radius: 6px; overflow: hidden; position: relative; }
+        /* Removido o display:block do canvas via CSS para forçar a leitura pelo JS */
+        canvas { margin: 0 auto; touch-action: none; background-image: radial-gradient(#E1E8ED 1px, transparent 1px); background-size: 20px 20px;}
+        .instrucao-canvas { font-size: 0.8rem; color: #FFF; padding: 10px; background: var(--cor-secundaria); font-weight: bold;}
+
+        /* Modais */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); z-index: 2000; justify-content: center; align-items: center; padding: 15px; box-sizing: border-box;}
+        .modal-conteudo { background: #FFF; padding: 20px; border-radius: 8px; width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto;}
+
+        /* UI Porta */
+        .seletor-abertura { background: #F8F9FA; padding: 12px; border-radius: 8px; border: 1px solid #DDD; margin-bottom: 15px; text-align: center; }
+        .seletor-abertura label { color: var(--cor-principal); font-size: 0.75rem; text-transform: uppercase; margin-bottom: 10px;}
+        .grid-abertura { display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-abertura { padding: 10px 5px; font-size: 0.7rem; background: #FFF; border: 2px solid #CCC; border-radius: 6px; color: #555; margin: 0; cursor: pointer; transition: all 0.2s; flex: 1;}
+        .btn-abertura.ativo { border-color: var(--cor-principal); background: #E8F0FE; color: var(--cor-principal); font-weight: 800; transform: scale(1.05); box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
+        .img-abertura { height: 75px; object-fit: contain; border-radius: 4px;}
+
+        /* Lista Rascunho */
+        .painel-vaos-rascunho { margin-top: 15px; padding: 10px; background: #F8F9FA; border-radius: 6px; border: 1px solid #E1E8ED; }
+        .titulo-vaos { font-size: 0.85rem; font-weight: bold; color: var(--cor-secundaria); margin-bottom: 10px; border-bottom: 1px solid #DDD; padding-bottom: 5px; }
+        .item-rascunho-vao { background: #FFF; padding: 10px; margin-bottom: 8px; border-left: 4px solid var(--cor-secundaria); display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+        /* Rodapé Fixo */
+        .detalhes-ambiente { font-size: 0.9rem; line-height: 1.5; color: #444; }
+        .destaque-medida { font-size: 0.95rem; font-weight: bold; display: block; margin-top: 5px; padding: 8px; border-radius: 4px;}
+        .destaque-piso { background: #E8F0FE; color: var(--cor-principal); border-left: 4px solid var(--cor-principal);}
+        .destaque-parede { background: #E8F5E9; color: #2E7D32; border-left: 4px solid #2E7D32;}
+        .destaque-rodape { background: #FFF3E0; color: #E65100; border-left: 4px solid #E65100; margin-top: 5px;}
+        
+        .rodape-totais { position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--cor-principal); color: white; padding: 12px 5px; box-shadow: 0 -4px 10px rgba(0,0,0,0.15); box-sizing: border-box; display: grid; grid-template-columns: 1fr 1fr 1fr; text-align: center; z-index: 1000; }
+        .bloco-total { border-right: 1px solid rgba(255,255,255,0.2); padding: 0 5px;}
+        .bloco-total:last-child { border-right: none; }
+        .valor-total { display: block; font-size: 1rem; font-weight: bold; }
+        .rotulo-total { display: block; font-size: 0.55rem; opacity: 0.9; text-transform: uppercase; margin-top: 2px; }
+    </style>
+</head>
+<body>
+
+    <div class="cabecalho">
+        <h1>SISTEMA DE MEDIDAS PRO 6.7</h1>
+    </div>
+
+    <div class="cartao" id="painelPrincipal">
+        <h2 id="tituloPainelPrincipal">NOVO AMBIENTE</h2>
+        
+        <div class="linha">
+            <div class="grupo-campo coluna" style="flex: 1.5;">
+                <label>AMBIENTE BASE</label>
+                <div class="select-container">
+                    <select id="campoAmbienteBase" style="flex: 1;">
+                        <option value="BANHEIRO">BANHEIRO</option>
+                        <option value="COZINHA">COZINHA</option>
+                        <option value="HALL">HALL</option>
+                        <option value="QUARTO">QUARTO</option>
+                        <option value="SALA">SALA</option>
+                        <option value="ÁREA DE SERVIÇO">ÁREA DE SERVIÇO</option>
+                    </select>
+                    <button type="button" class="btn-add-ambiente" id="btnAbreModalNovoAmbiente">+</button>
+                </div>
+            </div>
+            <div class="grupo-campo coluna" style="flex: 1;">
+                <label>DETALHE</label>
+                <input type="text" id="campoAmbienteDescricao" placeholder="EX: CASAL" oninput="this.value = this.value.toUpperCase()">
+            </div>
+        </div>
+
+        <div class="linha">
+            <div class="grupo-campo coluna">
+                <label>LARGURA (M)</label>
+                <input type="number" id="campoLargura" step="0.01" placeholder="0.00">
+            </div>
+            <div class="grupo-campo coluna">
+                <label>COMPRIM. (M)</label>
+                <input type="number" id="campoComprimento" step="0.01" placeholder="0.00">
+            </div>
+            <div class="grupo-campo coluna">
+                <label>ALTURA (M)</label>
+                <input type="number" id="campoAltura" step="0.01" placeholder="0.00">
+            </div>
+        </div>
+
+        <div class="grupo-campo">
+            <label>TIPO DE CÁLCULO (MATERIAL)</label>
+            <select id="campoTipo">
+                <option value="AMBOS">PISO E REVESTIMENTO DE PAREDE</option>
+                <option value="PISO">SOMENTE PISO</option>
+                <option value="PAREDE">SOMENTE REVESTIMENTO DE PAREDE</option>
+            </select>
+        </div>
+
+        <div class="area-desenho-container" id="containerInterativo" style="display:none; width: 100%;">
+            <div class="instrucao-canvas">👇 TOQUE EM (P) PORTAS OU (J) JANELAS</div>
+            <canvas id="telaInterativa"></canvas>
+        </div>
+
+        <div class="painel-vaos-rascunho" id="painelVaos" style="display:none;">
+            <div class="titulo-vaos">DESCONTOS E ESPECIFICAÇÕES:</div>
+            <div id="listaVaosRascunho"></div>
+        </div>
+
+        <button class="botao-principal" id="btnSalvarAmbiente">SALVAR AMBIENTE</button>
+        <button class="botao-fechar" id="btnCancelarEdicao" style="display:none;">CANCELAR EDIÇÃO</button>
+    </div>
+
+    <div id="relatorioAmbientes"></div>
+
+    <div class="modal-overlay" id="modalNovoAmbiente">
+        <div class="modal-conteudo">
+            <h2>CADASTRAR NOVO AMBIENTE</h2>
+            <div class="grupo-campo">
+                <label>NOME DO AMBIENTE (EX: ESCRITÓRIO)</label>
+                <input type="text" id="inputNovoAmbiente" placeholder="DIGITE O NOME" oninput="this.value = this.value.toUpperCase()">
+            </div>
+            <button class="botao-sucesso" id="btnSalvarNovoAmbienteLista">ADICIONAR NA LISTA</button>
+            <button class="botao-fechar" id="btnFecharModalNovoAmbiente">CANCELAR</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalVao">
+        <div class="modal-conteudo">
+            <h2 id="tituloModalVao">ADICIONAR...</h2>
+            <input type="hidden" id="paredeSelecionada">
+            <input type="hidden" id="posicaoSelecionada">
+            <input type="hidden" id="tipoVaoFixo">
+
+            <div class="linha">
+                <div class="grupo-campo coluna">
+                    <label>LARGURA (M)</label>
+                    <input type="number" id="modalLarguraVao" step="0.01" placeholder="0.00">
+                </div>
+                <div class="grupo-campo coluna">
+                    <label>ALTURA (M)</label>
+                    <input type="number" id="modalAlturaVao" step="0.01" placeholder="0.00">
+                </div>
+            </div>
+
+            <div id="blocoAberturaPorta" style="display:none;">
+                <div class="seletor-abertura">
+                    <label>QUAL O LADO DE ABERTURA?</label>
+                    <div class="grid-abertura">
+                        <button type="button" class="btn-abertura ativo" id="btn_DIREITA">DIREITA</button>
+                        <img src="https://www.taqi.com.br/file/general/portas.03.jpg" class="img-abertura">
+                        <button type="button" class="btn-abertura" id="btn_ESQUERDA">ESQUERDA</button>
+                    </div>
+                    <input type="hidden" id="modalAberturaPorta" value="DIREITA">
+                </div>
+
+                <div class="linha">
+                    <div class="grupo-campo coluna">
+                        <label>ESPESSURA PAREDE (CM)</label>
+                        <input type="number" id="modalAduela" placeholder="Ex: 15" value="15">
+                    </div>
+                </div>
+                
+                <div class="linha">
+                    <div class="grupo-campo coluna">
+                        <label>LARGURA ALIZAR</label>
+                        <select id="modalLarguraAlizar">
+                            <option value="5 CM">5 CM</option>
+                            <option value="7 CM" selected>7 CM</option>
+                            <option value="10 CM">10 CM</option>
+                        </select>
+                    </div>
+                    <div class="grupo-campo coluna">
+                        <label>CORTE ALIZAR</label>
+                        <select id="modalCorteAlizar">
+                            <option value="45 GRAUS">45 GRAUS (MEIA ESQUADRIA)</option>
+                            <option value="90 GRAUS">90 GRAUS (RETO)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button class="botao-principal" id="btnConfirmarVao">CONFIRMAR INCLUSÃO</button>
+            <button class="botao-fechar" id="btnFecharModalVao">CANCELAR</button>
+        </div>
+    </div>
+
+    <div class="rodape-totais">
+        <div class="bloco-total">
+            <span class="valor-total" id="totalPiso">0.00 m²</span>
+            <span class="rotulo-total">PISO (CHÃO)</span>
+        </div>
+        <div class="bloco-total">
+            <span class="valor-total" id="totalParede">0.00 m²</span>
+            <span class="rotulo-total">REVEST. PAREDE</span>
+        </div>
+        <div class="bloco-total">
+            <span class="valor-total" id="totalRodape">0.00 m</span>
+            <span class="rotulo-total">RODAPÉ LINEAR</span>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================================
+        // LÓGICA JS TOTALMENTE REESCRITA PARA NÃO QUEBRAR NO CELULAR
+        // ============================================================================
+
+        const AppState = {
+            rascunho: { larg: 0, comp: 0, alt: 0, vaos: [] },
+            pontosInterativos: [],
+            idEdicaoAtual: null,
+            projetos: [],
+            tiposAmbientes: []
+        };
+
+        // 1. CARREGAMENTO SEGURO DOS DADOS
+        document.addEventListener("DOMContentLoaded", () => {
+            try {
+                let p = JSON.parse(localStorage.getItem('bd_medidas_vilarejo_pro'));
+                if (Array.isArray(p)) AppState.projetos = p;
+            } catch(e) {}
+
+            try {
+                let t = JSON.parse(localStorage.getItem('bd_tipos_ambientes'));
+                if (Array.isArray(t)) AppState.tiposAmbientes = t;
+            } catch(e) {}
+
+            renderizarSelectAmbientes();
+            renderizarListaSalva();
+            registrarEventos();
+        });
+
+        // 2. REGISTRO DE EVENTOS (Substitui onclick do HTML)
+        function registrarEventos() {
+            // Gatilhos de Desenho da Planta (Sempre que digitar algo nas medidas)
+            document.getElementById('campoLargura').addEventListener('input', atualizarPlantaEditavel);
+            document.getElementById('campoComprimento').addEventListener('input', atualizarPlantaEditavel);
+            document.getElementById('campoAltura').addEventListener('input', atualizarPlantaEditavel);
+            document.getElementById('campoTipo').addEventListener('change', atualizarPlantaEditavel);
+
+            // Botão Adicionar Novo Ambiente Base (+)
+            document.getElementById('btnAbreModalNovoAmbiente').addEventListener('click', () => {
+                document.getElementById('inputNovoAmbiente').value = '';
+                document.getElementById('modalNovoAmbiente').style.display = 'flex';
+            });
+            
+            document.getElementById('btnFecharModalNovoAmbiente').addEventListener('click', () => {
+                document.getElementById('modalNovoAmbiente').style.display = 'none';
+            });
+
+            document.getElementById('btnSalvarNovoAmbienteLista').addEventListener('click', () => {
+                let novo = document.getElementById('inputNovoAmbiente').value.toUpperCase().trim();
+                if(novo) {
+                    if(!AppState.tiposAmbientes.includes(novo)) {
+                        AppState.tiposAmbientes.push(novo);
+                        localStorage.setItem('bd_tipos_ambientes', JSON.stringify(AppState.tiposAmbientes));
+                    }
+                    renderizarSelectAmbientes(novo);
+                    document.getElementById('modalNovoAmbiente').style.display = 'none';
+                } else {
+                    alert("DIGITE UM NOME VÁLIDO.");
+                }
+            });
+
+            // Botões de Direção da Porta
+            document.getElementById('btn_DIREITA').addEventListener('click', () => selecionarAbertura('DIREITA'));
+            document.getElementById('btn_ESQUERDA').addEventListener('click', () => selecionarAbertura('ESQUERDA'));
+
+            // Botões de Vão e Salvar
+            document.getElementById('btnConfirmarVao').addEventListener('click', confirmarVao);
+            document.getElementById('btnFecharModalVao').addEventListener('click', () => {
+                document.getElementById('modalVao').style.display = 'none';
+                document.getElementById('modalLarguraVao').value = "";
+                document.getElementById('modalAlturaVao').value = "";
+            });
+
+            document.getElementById('btnSalvarAmbiente').addEventListener('click', salvarAmbienteFinal);
+            document.getElementById('btnCancelarEdicao').addEventListener('click', cancelarEdicao);
+
+            // Evento do Canvas
+            document.getElementById('telaInterativa').addEventListener('click', function(evento) {
+                const rect = this.getBoundingClientRect();
+                const cliqueX = evento.clientX - rect.left;
+                const cliqueY = evento.clientY - rect.top;
+
+                AppState.pontosInterativos.forEach(pt => {
+                    const dist = Math.sqrt(Math.pow(cliqueX - pt.x, 2) + Math.pow(cliqueY - pt.y, 2));
+                    if (dist < 25) { // Raio de toque super generoso para celular
+                        abrirModalVao(pt.id, pt.parede, pt.posLabel);
+                    }
+                });
+            });
+        }
+
+        // 3. FUNÇÕES GERAIS
+        function selecionarAbertura(valor) {
+            document.getElementById('modalAberturaPorta').value = valor;
+            document.getElementById('btn_DIREITA').classList.remove('ativo');
+            document.getElementById('btn_ESQUERDA').classList.remove('ativo');
+            document.getElementById('btn_' + valor).classList.add('ativo');
+            atualizarPlantaEditavel();
+        }
+
+        function renderizarSelectAmbientes(valorSelecionar = null) {
+            const select = document.getElementById('campoAmbienteBase');
+            const padroes = ["BANHEIRO", "COZINHA", "HALL", "QUARTO", "SALA", "ÁREA DE SERVIÇO"];
+            const todos = [...new Set([...padroes, ...AppState.tiposAmbientes])].sort();
+            
+            const atual = valorSelecionar || select.value || "BANHEIRO";
+            select.innerHTML = "";
+            todos.forEach(tipo => select.innerHTML += `<option value="${tipo}">${tipo}</option>`);
+            if (todos.includes(atual)) select.value = atual;
+        }
+
+        // --- SOLUÇÃO DO BUG DO CANVAS NO CELULAR ---
+        function atualizarPlantaEditavel() {
+            AppState.rascunho.larg = parseFloat(document.getElementById('campoLargura').value) || 0;
+            AppState.rascunho.comp = parseFloat(document.getElementById('campoComprimento').value) || 0;
+            AppState.rascunho.alt = parseFloat(document.getElementById('campoAltura').value) || 0;
+
+            const container = document.getElementById('containerInterativo');
+            const painelVaos = document.getElementById('painelVaos');
+
+            if (AppState.rascunho.larg > 0 && AppState.rascunho.comp > 0) {
+                // Primeiro: Torna o elemento visível
+                container.style.display = 'block';
+                painelVaos.style.display = 'block';
+                
+                // Segundo: Usa RequestAnimationFrame para garantir que o navegador desenhou o bloco na tela
+                // Isso resolve 100% o erro do celular ler "0" de largura.
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        desenharMotorGrafico('telaInterativa', AppState.rascunho, true);
+                    });
+                });
+                
+                renderizarVaosRascunho();
+            } else {
+                container.style.display = 'none';
+                painelVaos.style.display = 'none';
+            }
+        }
+
+        function desenharMotorGrafico(idCanvas, dados, modoEdicao = false) {
+            const canvas = document.getElementById(idCanvas);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const container = canvas.parentElement;
+            
+            // Backup Seguro de Largura: Se der 0, assume uma tela padrão de celular (300px)
+            let w = container.offsetWidth;
+            if (w === 0) w = window.innerWidth > 0 ? window.innerWidth - 40 : 300; 
+
+            // Redução de 50%
+            canvas.width = w * 0.50; 
+            canvas.height = canvas.width * 1.2; 
+
+            const W = canvas.width;
+            const H = canvas.height;
+            ctx.clearRect(0, 0, W, H);
+
+            const margem = 40; 
+            const propX = (W - margem * 2) / dados.larg;
+            const propY = (H - margem * 2) / dados.comp;
+            const escala = Math.min(propX, propY);
+
+            const L = dados.larg * escala;
+            const C = dados.comp * escala;
+            const cX = (W - L) / 2;
+            const cY = (H - C) / 2;
+
+            const boneca = 0.10 * escala;
+
+            ctx.strokeStyle = '#4A4A4A';
+            ctx.lineWidth = 6;
+            ctx.strokeRect(cX, cY, L, C);
+
+            ctx.fillStyle = '#999';
+            ctx.font = 'bold 10px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('PAREDE A', cX + L/2, cY - 15);
+            ctx.save(); ctx.translate(cX + L + 15, cY + C/2); ctx.rotate(Math.PI/2); ctx.fillText('PAREDE B', 0, 0); ctx.restore();
+            ctx.fillText('PAREDE C', cX + L/2, cY + C + 15);
+            ctx.save(); ctx.translate(cX - 15, cY + C/2); ctx.rotate(-Math.PI/2); ctx.fillText('PAREDE D', 0, 0); ctx.restore();
+
+            if (dados.vaos) {
+                dados.vaos.forEach(vao => {
+                    const tv = vao.larg * escala; 
+                    let px, py;
+
+                    if (vao.parede === 'A') {
+                        if (vao.posLabel === 'INICIO') px = cX + boneca;
+                        else if (vao.posLabel === 'FIM') px = cX + L - boneca - tv;
+                        else px = cX + (L - tv) / 2;
+                        py = cY;
+                    } else if (vao.parede === 'B') {
+                        px = cX + L;
+                        if (vao.posLabel === 'INICIO') py = cY + boneca;
+                        else if (vao.posLabel === 'FIM') py = cY + C - boneca - tv;
+                        else py = cY + (C - tv) / 2;
+                    } else if (vao.parede === 'C') {
+                        if (vao.posLabel === 'INICIO') px = cX + boneca;
+                        else if (vao.posLabel === 'FIM') px = cX + L - boneca - tv;
+                        else px = cX + (L - tv) / 2;
+                        py = cY + C;
+                    } else if (vao.parede === 'D') {
+                        px = cX;
+                        if (vao.posLabel === 'INICIO') py = cY + boneca;
+                        else if (vao.posLabel === 'FIM') py = cY + C - boneca - tv;
+                        else py = cY + (C - tv) / 2;
+                    }
+
+                    // Linha Vermelha
+                    if (vao.parede === 'A' || vao.parede === 'C') {
+                        ctx.clearRect(px, py - 3, tv, 6);
+                        ctx.beginPath();
+                        ctx.setLineDash([4, 4]);
+                        ctx.strokeStyle = '#FF0000';
+                        ctx.lineWidth = 2;
+                        ctx.moveTo(px, py);
+                        ctx.lineTo(px + tv, py);
+                        ctx.stroke();
+                        ctx.setLineDash([]);
+                    } else {
+                        ctx.clearRect(px - 3, py, 6, tv);
+                        ctx.beginPath();
+                        ctx.setLineDash([4, 4]);
+                        ctx.strokeStyle = '#FF0000';
+                        ctx.lineWidth = 2;
+                        ctx.moveTo(px, py);
+                        ctx.lineTo(px, py + tv);
+                        ctx.stroke();
+                        ctx.setLineDash([]);
+                    }
+
+                    if (vao.tipo === 'JANELA') {
+                        ctx.beginPath();
+                        ctx.strokeStyle = '#28A745';
+                        ctx.lineWidth = 6;
+                        if(vao.parede === 'A' || vao.parede === 'C') { ctx.moveTo(px, py); ctx.lineTo(px + tv, py); }
+                        else { ctx.moveTo(px, py); ctx.lineTo(px, py + tv); }
+                        ctx.stroke();
+                    } else if (vao.tipo === 'PORTA') {
+                        let direita = vao.abert === 'DIREITA'; 
+                        let hx, hy, la, asa, aea, ccw;
+
+                        if (vao.parede === 'A') { 
+                            if (direita) { hx = px + tv; hy = py; la = Math.PI/2; asa = Math.PI; aea = Math.PI/2; ccw = true; } 
+                            else { hx = px; hy = py; la = Math.PI/2; asa = 0; aea = Math.PI/2; ccw = false; } 
+                        } else if (vao.parede === 'B') { 
+                            if (direita) { hx = px; hy = py; la = Math.PI; asa = Math.PI/2; aea = Math.PI; ccw = false; }
+                            else { hx = px; hy = py + tv; la = Math.PI; asa = -Math.PI/2; aea = Math.PI; ccw = true; }
+                        } else if (vao.parede === 'C') { 
+                            if (direita) { hx = px; hy = py; la = -Math.PI/2; asa = 0; aea = -Math.PI/2; ccw = true; }
+                            else { hx = px + tv; hy = py; la = -Math.PI/2; asa = Math.PI; aea = -Math.PI/2; ccw = false; }
+                        } else if (vao.parede === 'D') { 
+                            if (direita) { hx = px; hy = py + tv; la = 0; asa = -Math.PI/2; aea = 0; ccw = false; }
+                            else { hx = px; hy = py; la = 0; asa = Math.PI/2; aea = 0; ccw = true; }
+                        }
+
+                        ctx.strokeStyle = '#007BFF';
+                        ctx.lineWidth = 3;
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(hx, hy);
+                        ctx.lineTo(hx + Math.cos(la) * tv, hy + Math.sin(la) * tv);
+                        ctx.stroke();
+
+                        ctx.beginPath();
+                        ctx.arc(hx, hy, tv, asa, aea, ccw);
+                        ctx.stroke();
+                    }
+                });
+            }
+
+            if (modoEdicao) {
+                AppState.pontosInterativos = [];
+                let dOff = 0.3 * escala; 
+
+                const pts = AppState.pontosInterativos;
+                pts.push({ id: 'P', parede: 'A', posLabel: 'INICIO', x: cX + boneca + dOff, y: cY });
+                pts.push({ id: 'J', parede: 'A', posLabel: 'MEIO', x: cX + L*0.5, y: cY });
+                pts.push({ id: 'P', parede: 'A', posLabel: 'FIM', x: cX + L - boneca - dOff, y: cY });
+                
+                pts.push({ id: 'P', parede: 'B', posLabel: 'INICIO', x: cX + L, y: cY + boneca + dOff });
+                pts.push({ id: 'J', parede: 'B', posLabel: 'MEIO', x: cX + L, y: cY + C*0.5 });
+                pts.push({ id: 'P', parede: 'B', posLabel: 'FIM', x: cX + L, y: cY + C - boneca - dOff });
+                
+                pts.push({ id: 'P', parede: 'C', posLabel: 'INICIO', x: cX + boneca + dOff, y: cY + C });
+                pts.push({ id: 'J', parede: 'C', posLabel: 'MEIO', x: cX + L*0.5, y: cY + C });
+                pts.push({ id: 'P', parede: 'C', posLabel: 'FIM', x: cX + L - boneca - dOff, y: cY + C });
+                
+                pts.push({ id: 'P', parede: 'D', posLabel: 'INICIO', x: cX, y: cY + boneca + dOff });
+                pts.push({ id: 'J', parede: 'D', posLabel: 'MEIO', x: cX, y: cY + C*0.5 });
+                pts.push({ id: 'P', parede: 'D', posLabel: 'FIM', x: cX, y: cY + C - boneca - dOff });
+
+                ctx.font = 'bold 11px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                pts.forEach(pt => {
+                    ctx.beginPath();
+                    ctx.arc(pt.x, pt.y, 14, 0, Math.PI * 2); // Tamanho ligeiramente maior para o dedo
+                    ctx.fillStyle = pt.id === 'P' ? '#007BFF' : '#28A745'; 
+                    ctx.fill();
+                    ctx.strokeStyle = '#FFF';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    ctx.fillStyle = '#FFF';
+                    ctx.fillText(pt.id, pt.x, pt.y);
+                });
+            }
+        }
+
+        // --- VÃOS E LISTAGEM RASCUNHO ---
+        function renderizarVaosRascunho() {
+            const lista = document.getElementById('listaVaosRascunho');
+            lista.innerHTML = '';
+
+            if (AppState.rascunho.vaos.length === 0) {
+                lista.innerHTML = '<span style="color:#888; font-size: 0.8rem;">NENHUM VÃO INSERIDO. TOQUE NOS BALÕES DA PLANTA.</span>';
+                return;
+            }
+
+            AppState.rascunho.vaos.forEach((v, index) => {
+                let detalhes = '';
+                if (v.tipo === 'PORTA') {
+                    detalhes = `
+                        <span style="color:#007BFF; font-size: 0.75rem; font-weight:bold;">ABERTURA: ${v.abert}</span>
+                        <span style="color:#555; font-size: 0.75rem;">ADUELA: ${v.aduela}cm | ALIZAR: ${v.alizarLarg} (${v.alizarCorte})</span>
+                    `;
+                }
+
+                // Troquei o onclick direto para usar uma função delegada
+                let btnHtml = `<button class="botao-perigo btn-remover-vao" data-idx="${index}">X</button>`;
+
+                lista.innerHTML += `
+                    <div class="item-rascunho-vao">
+                        <div class="detalhe-vao-texto">
+                            <strong>${v.tipo} (PAREDE ${v.parede})</strong>
+                            <span>${v.larg.toFixed(2)}m larg x ${v.alt.toFixed(2)}m alt</span>
+                            ${detalhes}
+                        </div>
+                        ${btnHtml}
+                    </div>
+                `;
+            });
+
+            // Adiciona evento de clique nativo nos botões de excluir rascunho recém-criados
+            document.querySelectorAll('.btn-remover-vao').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const idx = this.getAttribute('data-idx');
+                    AppState.rascunho.vaos.splice(idx, 1);
+                    atualizarPlantaEditavel();
+                });
+            });
+        }
+
+        function abrirModalVao(tipo, parede, posLabel) {
+            document.getElementById('paredeSelecionada').value = parede;
+            document.getElementById('posicaoSelecionada').value = posLabel;
+            document.getElementById('tipoVaoFixo').value = tipo;
+
+            const nomeTipo = tipo === 'P' ? 'PORTA' : 'JANELA';
+            document.getElementById('tituloModalVao').innerText = `INSERIR ${nomeTipo} - PAREDE ${parede}`;
+            
+            document.getElementById('blocoAberturaPorta').style.display = tipo === 'P' ? 'block' : 'none';
+            if(tipo === 'P') selecionarAbertura('DIREITA');
+
+            document.getElementById('modalVao').style.display = 'flex';
+        }
+
+        function confirmarVao() {
+            const parede = document.getElementById('paredeSelecionada').value;
+            const posLabel = document.getElementById('posicaoSelecionada').value;
+            const tipoFixo = document.getElementById('tipoVaoFixo').value;
+            
+            const tipo = tipoFixo === 'P' ? 'PORTA' : 'JANELA';
+            const largV = parseFloat(document.getElementById('modalLarguraVao').value);
+            const altV = parseFloat(document.getElementById('modalAlturaVao').value);
+            
+            let abert = null, aduela = null, alizarLarg = null, alizarCorte = null;
+
+            if (tipo === 'PORTA') {
+                abert = document.getElementById('modalAberturaPorta').value;
+                aduela = document.getElementById('modalAduela').value;
+                alizarLarg = document.getElementById('modalLarguraAlizar').value;
+                alizarCorte = document.getElementById('modalCorteAlizar').value;
+            }
+
+            if (!largV || !altV) return alert("INFORME LARGURA E ALTURA DO VÃO.");
+
+            AppState.rascunho.vaos = AppState.rascunho.vaos.filter(v => !(v.parede === parede && v.posLabel === posLabel)); 
+            AppState.rascunho.vaos.push({ parede, tipo, larg: largV, alt: altV, abert, aduela, alizarLarg, alizarCorte, area: largV * altV, posLabel });
+            
+            document.getElementById('modalVao').style.display = 'none';
+            document.getElementById('modalLarguraVao').value = "";
+            document.getElementById('modalAlturaVao').value = "";
+            atualizarPlantaEditavel(); 
+        }
+
+        // --- SALVAR E RENDERIZAR LISTA FINAL ---
+        function salvarAmbienteFinal() {
+            const base = document.getElementById('campoAmbienteBase').value;
+            const desc = document.getElementById('campoAmbienteDescricao').value.toUpperCase().trim();
+            const tipoCalc = document.getElementById('campoTipo').value;
+            const A = AppState.rascunho;
+
+            if (A.larg <= 0 || A.comp <= 0 || A.alt <= 0) {
+                return alert("PREENCHA LARGURA, COMPRIMENTO E ALTURA.");
+            }
+
+            const nomeFinal = desc ? `${base} (${desc})` : base;
+
+            let areaChaoBruta = A.larg * A.comp;
+            let areaParedeBruta = (A.larg * A.alt * 2) + (A.comp * A.alt * 2);
+            let perimetro = (A.larg * 2) + (A.comp * 2);
+            
+            let descontoParedeTotal = 0;
+            let descontoRodape = 0;
+
+            A.vaos.forEach(v => { 
+                descontoParedeTotal += v.area; 
+                if(v.tipo === 'PORTA') descontoRodape += v.larg;
+            });
+
+            let calculoFinalPiso = 0;
+            let calculoFinalParede = 0;
+            let calculoFinalRodape = perimetro - descontoRodape;
+            if(calculoFinalRodape < 0) calculoFinalRodape = 0;
+
+            if (tipoCalc === 'PISO' || tipoCalc === 'AMBOS') calculoFinalPiso = areaChaoBruta; 
+            if (tipoCalc === 'PAREDE' || tipoCalc === 'AMBOS') {
+                calculoFinalParede = areaParedeBruta - descontoParedeTotal;
+                if (calculoFinalParede < 0) calculoFinalParede = 0;
+            }
+
+            const registroAtualizado = {
+                id: AppState.idEdicaoAtual ? AppState.idEdicaoAtual : Date.now(),
+                nome: nomeFinal,
+                base: base,
+                desc: desc,
+                l: A.larg, c: A.comp, a: A.alt,
+                tipoCalc: tipoCalc,
+                pisoLiquido: calculoFinalPiso,
+                paredeLiquido: calculoFinalParede,
+                rodapeLiquido: calculoFinalRodape,
+                vaos: [...A.vaos]
+            };
+
+            if (AppState.idEdicaoAtual) {
+                const index = AppState.projetos.findIndex(p => p.id === AppState.idEdicaoAtual);
+                AppState.projetos[index] = registroAtualizado;
+                AppState.idEdicaoAtual = null; 
+            } else {
+                AppState.projetos.unshift(registroAtualizado);
+            }
+
+            localStorage.setItem('bd_medidas_vilarejo_pro', JSON.stringify(AppState.projetos));
+            
+            limparFormulario();
+            renderizarListaSalva();
+        }
+
+        function limparFormulario() {
+            document.getElementById('campoAmbienteDescricao').value = "";
+            document.getElementById('campoLargura').value = "";
+            document.getElementById('campoComprimento').value = "";
+            document.getElementById('campoAltura').value = "";
+            
+            AppState.rascunho = { larg: 0, comp: 0, alt: 0, vaos: [] };
+            
+            document.getElementById('tituloPainelPrincipal').innerText = "NOVO AMBIENTE";
+            const btnSalvar = document.getElementById('btnSalvarAmbiente');
+            btnSalvar.innerText = "SALVAR AMBIENTE";
+            btnSalvar.classList.remove('botao-sucesso');
+            btnSalvar.classList.add('botao-principal');
+            document.getElementById('btnCancelarEdicao').style.display = 'none';
+
+            atualizarPlantaEditavel();
+        }
+
+        function renderizarListaSalva() {
+            const painel = document.getElementById('relatorioAmbientes');
+            painel.innerHTML = "";
+            let somaPiso = 0, somaParede = 0, somaRodape = 0;
+
+            AppState.projetos.forEach(amb => {
+                somaPiso += amb.pisoLiquido;
+                somaParede += amb.paredeLiquido;
+                somaRodape += amb.rodapeLiquido;
+
+                let txtVaos = amb.vaos.length > 0 ? `<br><strong style="color:#D9534F; font-size:0.8rem;">ESPECIFICAÇÕES DOS VÃOS:</strong><br>` : '';
+                amb.vaos.forEach(v => {
+                    if (v.tipo === 'PORTA') {
+                        txtVaos += `<span style="font-size:0.8rem; color:#555;">- PORTA (Parede ${v.parede}): ${v.larg.toFixed(2)}x${v.alt.toFixed(2)}m | ${v.abert} | ADUELA: ${v.aduela}cm | ALIZAR: ${v.alizarLarg} (${v.alizarCorte})</span><br>`;
+                    } else {
+                        txtVaos += `<span style="font-size:0.8rem; color:#555;">- JANELA (Parede ${v.parede}): ${v.larg.toFixed(2)}x${v.alt.toFixed(2)}m</span><br>`;
+                    }
+                });
+
+                let htmlResultadoFinal = '';
+                if (amb.tipoCalc === 'AMBOS') {
+                    htmlResultadoFinal = `
+                        <span class="destaque-medida destaque-piso">ÁREA PISO: ${amb.pisoLiquido.toFixed(2)} m²</span>
+                        <span class="destaque-medida destaque-parede">ÁREA PAREDE: ${amb.paredeLiquido.toFixed(2)} m²</span>
+                    `;
+                } else if (amb.tipoCalc === 'PISO') {
+                    htmlResultadoFinal = `<span class="destaque-medida destaque-piso">ÁREA PISO: ${amb.pisoLiquido.toFixed(2)} m²</span>`;
+                } else {
+                    htmlResultadoFinal = `<span class="destaque-medida destaque-parede">ÁREA PAREDE: ${amb.paredeLiquido.toFixed(2)} m²</span>`;
+                }
+                
+                htmlResultadoFinal += `<span class="destaque-medida destaque-rodape">RODAPÉ (LINEAR): ${amb.rodapeLiquido.toFixed(2)} m</span>`;
+
+                painel.innerHTML += `
+                    <div class="cartao">
+                        <h2>
+                            ${amb.nome} 
+                            <div>
+                                <button class="botao-editar btn-edit-acao" data-id="${amb.id}">EDITAR</button>
+                                <button class="botao-perigo btn-del-acao" data-id="${amb.id}">APAGAR</button>
+                            </div>
+                        </h2>
+                        <div class="detalhes-ambiente">
+                            <strong>LARG:</strong> ${amb.l.toFixed(2)}m | <strong>COMP:</strong> ${amb.c.toFixed(2)}m | <strong>ALTURA:</strong> ${amb.a.toFixed(2)}m<br>
+                            ${txtVaos}
+                            ${htmlResultadoFinal}
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Atribui eventos nativos aos botões recém-criados
+            document.querySelectorAll('.btn-edit-acao').forEach(btn => {
+                btn.addEventListener('click', function() { editarRegistro(parseInt(this.getAttribute('data-id'))); });
+            });
+            document.querySelectorAll('.btn-del-acao').forEach(btn => {
+                btn.addEventListener('click', function() { deletarRegistro(parseInt(this.getAttribute('data-id'))); });
+            });
+
+            document.getElementById('totalPiso').innerText = `${somaPiso.toFixed(2)} m²`;
+            document.getElementById('totalParede').innerText = `${somaParede.toFixed(2)} m²`;
+            document.getElementById('totalRodape').innerText = `${somaRodape.toFixed(2)} m`;
+        }
+
+        // --- FUNÇÕES DE AÇÃO NA LISTA ---
+        function editarRegistro(id) {
+            const projeto = AppState.projetos.find(p => p.id === id);
+            if(!projeto) return;
+
+            AppState.idEdicaoAtual = id;
+
+            AppState.rascunho = {
+                larg: projeto.l,
+                comp: projeto.c,
+                alt: projeto.a,
+                vaos: JSON.parse(JSON.stringify(projeto.vaos))
+            };
+
+            renderizarSelectAmbientes(projeto.base);
+            document.getElementById('campoAmbienteDescricao').value = projeto.desc;
+            document.getElementById('campoLargura').value = projeto.l;
+            document.getElementById('campoComprimento').value = projeto.c;
+            document.getElementById('campoAltura').value = projeto.a;
+            document.getElementById('campoTipo').value = projeto.tipoCalc;
+
+            const nomeFormatado = projeto.desc ? `${projeto.base} (${projeto.desc})` : projeto.base;
+            document.getElementById('tituloPainelPrincipal').innerText = "EDITANDO: " + nomeFormatado;
+            
+            const btnSalvar = document.getElementById('btnSalvarAmbiente');
+            btnSalvar.innerText = "ATUALIZAR AMBIENTE";
+            btnSalvar.classList.remove('botao-principal');
+            btnSalvar.classList.add('botao-sucesso');
+            document.getElementById('btnCancelarEdicao').style.display = 'block';
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            atualizarPlantaEditavel();
+        }
+
+        function deletarRegistro(id) {
+            if (confirm("CONFIRMAR EXCLUSÃO DO AMBIENTE?")) {
+                AppState.projetos = AppState.projetos.filter(i => i.id !== id);
+                localStorage.setItem('bd_medidas_vilarejo_pro', JSON.stringify(AppState.projetos));
+                if (AppState.idEdicaoAtual === id) cancelarEdicao();
+                renderizarListaSalva();
+            }
+        }
+
+        function cancelarEdicao() {
+            AppState.idEdicaoAtual = null;
+            limparFormulario();
+        }
+    </script>
+</body>
+</html>
