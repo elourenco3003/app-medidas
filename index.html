@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MEDIDAS VILAREJO PRO 8.3</title>
+    <title>MEDIDAS VILAREJO PRO 8.4</title>
     
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
@@ -101,7 +101,7 @@
 <body>
 
     <div class="cabecalho">
-        <h1><span class="material-symbols-outlined" style="font-size: 24px;">architecture</span> VILAREJO PRO 8.3</h1>
+        <h1><span class="material-symbols-outlined" style="font-size: 24px;">architecture</span> VILAREJO PRO 8.4</h1>
     </div>
 
     <div class="cartao" id="painelPrincipal">
@@ -416,9 +416,10 @@
                         py = cY + C;
                     } else if (vao.parede === 'D') {
                         px = cX;
-                        if (vao.posLabel === 'INICIO') py = cY + boneca;
-                        else if (vao.posLabel === 'FIM') py = cY + C - boneca - tv;
-                        else py = cY + (C - tv) / 2;
+                        if (vao.posLabel === 'INICIO') px = cX + boneca;
+                        else if (vao.posLabel === 'FIM') px = cX + L - boneca - tv;
+                        else px = cX + (L - tv) / 2;
+                        py = cY + C;
                     }
 
                     if (vao.parede === 'A' || vao.parede === 'C') {
@@ -450,7 +451,7 @@
                             if (direita) { hx = px; hy = py; la = -Math.PI/2; asa = 0; aea = -Math.PI/2; ccw = true; }
                             else { hx = px + tv; hy = py; la = -Math.PI/2; asa = Math.PI; aea = -Math.PI/2; ccw = false; }
                         } else if (vao.parede === 'D') { 
-                            if (direita) { hx = px; hy = py + tv; la = 0; asa = -Math.PI/2; aea = 0; ccw = false; }
+                            if (direita) { hx = px; hy = py; la = 0; asa = -Math.PI/2; aea = 0; ccw = false; }
                             else { hx = px; hy = py; la = 0; asa = Math.PI/2; aea = 0; ccw = true; }
                         }
 
@@ -461,34 +462,43 @@
                 });
             }
 
+            // Balões (VISTAS INTERATIVAS)
             pontosTouch = [];
             let dOff = 0.3 * escala; 
 
-            // Função auxiliar para verificar se já existe um vão neste ponto
+            // Função auxiliar para verificar se já existe um vão neste ponto (regra V8.3)
             const temVao = (par, pos) => dados.vaos.some(v => v.parede === par && v.posLabel === pos);
 
-            // Só insere o ponto interativo se NÃO houver vão nele
-            if(!temVao('A', 'INICIO')) pontosTouch.push({ id: 'P', parede: 'A', posLabel: 'INICIO', x: cX + boneca + dOff, y: cY });
-            if(!temVao('A', 'MEIO'))   pontosTouch.push({ id: 'J', parede: 'A', posLabel: 'MEIO', x: cX + L*0.5, y: cY });
-            if(!temVao('A', 'FIM'))    pontosTouch.push({ id: 'P', parede: 'A', posLabel: 'FIM', x: cX + L - boneca - dOff, y: cY });
+            // V8.4: Sempre adiciona todos os pontos, mas marca se está ocupado
+            pontosTouch.push({ id: 'P', parede: 'A', posLabel: 'INICIO', x: cX + boneca + dOff, y: cY, ocupado: temVao('A', 'INICIO') });
+            pontosTouch.push({ id: 'J', parede: 'A', posLabel: 'MEIO', x: cX + L*0.5, y: cY, ocupado: temVao('A', 'MEIO') });
+            pontosTouch.push({ id: 'P', parede: 'A', posLabel: 'FIM', x: cX + L - boneca - dOff, y: cY, ocupado: temVao('A', 'FIM') });
             
-            if(!temVao('B', 'INICIO')) pontosTouch.push({ id: 'P', parede: 'B', posLabel: 'INICIO', x: cX + L, y: cY + boneca + dOff });
-            if(!temVao('B', 'MEIO'))   pontosTouch.push({ id: 'J', parede: 'B', posLabel: 'MEIO', x: cX + L, y: cY + C*0.5 });
-            if(!temVao('B', 'FIM'))    pontosTouch.push({ id: 'P', parede: 'B', posLabel: 'FIM', x: cX + L, y: cY + C - boneca - dOff });
+            pontosTouch.push({ id: 'P', parede: 'B', posLabel: 'INICIO', x: cX + L, y: cY + boneca + dOff, ocupado: temVao('B', 'INICIO') });
+            pontosTouch.push({ id: 'J', parede: 'B', posLabel: 'MEIO', x: cX + L, y: cY + C*0.5, ocupado: temVao('B', 'MEIO') });
+            pontosTouch.push({ id: 'P', parede: 'B', posLabel: 'FIM', x: cX + L, y: cY + C - boneca - dOff, ocupado: temVao('B', 'FIM') });
             
-            if(!temVao('C', 'INICIO')) pontosTouch.push({ id: 'P', parede: 'C', posLabel: 'INICIO', x: cX + boneca + dOff, y: cY + C });
-            if(!temVao('C', 'MEIO'))   pontosTouch.push({ id: 'J', parede: 'C', posLabel: 'MEIO', x: cX + L*0.5, y: cY + C });
-            if(!temVao('C', 'FIM'))    pontosTouch.push({ id: 'P', parede: 'C', posLabel: 'FIM', x: cX + L - boneca - dOff, y: cY + C });
+            pontosTouch.push({ id: 'P', parede: 'C', posLabel: 'INICIO', x: cX + boneca + dOff, y: cY + C, ocupado: temVao('C', 'INICIO') });
+            pontosTouch.push({ id: 'J', parede: 'C', posLabel: 'MEIO', x: cX + L*0.5, y: cY + C, ocupado: temVao('C', 'MEIO') });
+            pontosTouch.push({ id: 'P', parede: 'C', posLabel: 'FIM', x: cX + L - boneca - dOff, y: cY + C, ocupado: temVao('C', 'FIM') });
             
-            if(!temVao('D', 'INICIO')) pontosTouch.push({ id: 'P', parede: 'D', posLabel: 'INICIO', x: cX, y: cY + boneca + dOff });
-            if(!temVao('D', 'MEIO'))   pontosTouch.push({ id: 'J', parede: 'D', posLabel: 'MEIO', x: cX, y: cY + C*0.5 });
-            if(!temVao('D', 'FIM'))    pontosTouch.push({ id: 'P', parede: 'D', posLabel: 'FIM', x: cX, y: cY + C - boneca - dOff });
+            pontosTouch.push({ id: 'P', parede: 'D', posLabel: 'INICIO', x: cX, y: cY + boneca + dOff, ocupado: temVao('D', 'INICIO') });
+            pontosTouch.push({ id: 'J', parede: 'D', posLabel: 'MEIO', x: cX, y: cY + C*0.5, ocupado: temVao('D', 'MEIO') });
+            pontosTouch.push({ id: 'P', parede: 'D', posLabel: 'FIM', x: cX, y: cY + C - boneca - dOff, ocupado: temVao('D', 'FIM') });
 
             ctx.font = 'bold 12px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 
             pontosTouch.forEach(pt => {
+                // V8.4: Aplica opacidade baseada no status ocupado
+                ctx.save(); // Salva estado normal
+                if (pt.ocupado) {
+                    ctx.globalAlpha = 0.2; // Fica bem clarinho
+                } else {
+                    ctx.globalAlpha = 1.0; // Normal
+                }
+
                 ctx.beginPath();
                 ctx.arc(pt.x, pt.y, 14, 0, Math.PI * 2);
                 ctx.fillStyle = pt.id === 'P' ? '#007BFF' : '#28A745'; 
@@ -498,6 +508,8 @@
                 ctx.stroke();
                 ctx.fillStyle = '#FFF';
                 ctx.fillText(pt.id, pt.x, pt.y);
+
+                ctx.restore(); // Restaura estado normal
             });
         };
 
@@ -629,7 +641,6 @@
             });
         });
 
-        // --- GESTÃO DE VÃOS ---
         window.listarVaos = function() {
             const lista = document.getElementById('listaVaosRascunho');
             lista.innerHTML = '';
@@ -700,7 +711,6 @@
             window.atualizarPlantaEditavel(); 
         };
 
-        // --- SALVAR E RELATÓRIO ---
         window.salvarAmbienteFinal = function() {
             const base = document.getElementById('campoAmbienteBase').value;
             const desc = document.getElementById('campoAmbienteDescricao').value.toUpperCase().trim();
@@ -721,7 +731,7 @@
                 if(v.tipo === 'PORTA') dRod += v.larg;
             });
 
-            let fPiso = (tCalc === 'PISO' || tCalc === 'AMBOS') ? aChao : 0;
+            let fPiso = (tCalc === 'PISO' || tCalc === 'AMBOS' || tCalc === 'APENAS_PISO') ? aChao : 0;
             let fPar = (tCalc === 'PAREDE' || tCalc === 'AMBOS') ? Math.max(0, aPar - dPar) : 0;
             let fRod = Math.max(0, per - dRod);
 
