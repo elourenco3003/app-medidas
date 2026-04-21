@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MEDIDAS VILAREJO PRO 8.8</title>
+    <title>MEDIDAS VILAREJO PRO 8.9</title>
     
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
@@ -54,9 +54,9 @@
         .select-container { display: flex; gap: 8px; align-items: center; }
         .btn-add-ambiente { width: 50px; height: 48px; padding: 0; font-size: 1.5rem; border: 2px dashed var(--cor-secundaria); background: #F0F4F8; color: var(--cor-secundaria); border-radius: 8px; margin: 0;}
 
-        /* Canvas Geral - Centralizado e Proporcional */
+        /* Canvas Geral */
         .area-desenho-container { width: 100%; text-align: center; margin-top: 15px; background: #FFF; border: 2px solid var(--cor-borda); border-radius: 8px; overflow: hidden; position: relative;}
-        canvas { margin: 0 auto; display: block; touch-action: none; background-image: radial-gradient(#E1E8ED 1px, transparent 1px); background-size: 20px 20px;}
+        canvas { margin: 0 auto; display: block; touch-action: none; background-image: radial-gradient(#E1E8ED 1px, transparent 1px); background-size: 20px 20px; width: 100%;}
         .instrucao-canvas { font-size: 0.8rem; color: #FFF; padding: 10px; background: var(--cor-secundaria); font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 6px;}
 
         /* CARROSSEL DE VISTAS */
@@ -96,7 +96,7 @@
 <body>
 
     <div class="cabecalho">
-        <h1><span class="material-symbols-outlined" style="font-size: 24px;">architecture</span> VILAREJO PRO 8.8</h1>
+        <h1><span class="material-symbols-outlined" style="font-size: 24px;">architecture</span> VILAREJO PRO 8.9</h1>
     </div>
 
     <div class="cartao" id="painelPrincipal">
@@ -168,7 +168,7 @@
                         <span class="material-symbols-outlined">chevron_right</span>
                     </button>
                 </div>
-                <canvas id="telaVistaInterativa"></canvas>
+                <canvas id="telaVistaInterativa" style="width: 100%; display: block; margin: 0 auto;"></canvas>
             </div>
 
             <div id="listaVaosRascunho" style="margin-top: 15px;"></div>
@@ -355,30 +355,28 @@
             const ctx = canvas.getContext('2d');
             const container = canvas.parentElement;
             
-            // CORREÇÃO: Força o canvas a ter cerca de 55% da tela para ficar bonito e compacto
-            const containerW = container.clientWidth; 
-            canvas.width = containerW * 0.55; 
-            canvas.height = canvas.width * 1.2; 
+            // CORREÇÃO: Planta no tamanho da tela, formato 1:1 quadrado perfeito para dar espaço às bolinhas externas
+            const W = container.clientWidth; 
+            canvas.width = W; 
+            canvas.height = W; 
 
-            const W = canvas.width;
-            const H = canvas.height;
-            ctx.clearRect(0, 0, W, H);
+            ctx.clearRect(0, 0, W, W);
 
-            const margemX = W * 0.20;
-            const margemY = H * 0.15;
+            // Margem espaçosa para as bolinhas não esbarrarem nos cantos
+            const margem = 60;
             
-            const propX = (W - margemX * 2) / dados.larg;
-            const propY = (H - margemY * 2) / dados.comp;
-            const escala = Math.min(propX, propY);
+            const escX = (W - margem * 2) / dados.larg;
+            const escY = (W - margem * 2) / dados.comp;
+            const escala = Math.min(escX, escY);
 
             const L = dados.larg * escala;
             const C = dados.comp * escala;
             const cX = (W - L) / 2;
-            const cY = (H - C) / 2;
+            const cY = (W - C) / 2;
             const boneca = 0.10 * escala;
 
             ctx.strokeStyle = '#4A4A4A';
-            ctx.lineWidth = 4;
+            ctx.lineWidth = 6;
             ctx.strokeRect(cX, cY, L, C);
 
             ctx.fillStyle = '#999';
@@ -418,17 +416,17 @@
                     }
 
                     if (vao.parede === 'A' || vao.parede === 'C') {
-                        ctx.clearRect(px, py - 2, tv, 4);
-                        ctx.beginPath(); ctx.setLineDash([4, 4]); ctx.strokeStyle = '#FF0000'; ctx.lineWidth = 1.5;
+                        ctx.clearRect(px, py - 3, tv, 6);
+                        ctx.beginPath(); ctx.setLineDash([4, 4]); ctx.strokeStyle = '#FF0000'; ctx.lineWidth = 2;
                         ctx.moveTo(px, py); ctx.lineTo(px + tv, py); ctx.stroke(); ctx.setLineDash([]);
                     } else {
-                        ctx.clearRect(px - 2, py, 4, tv);
-                        ctx.beginPath(); ctx.setLineDash([4, 4]); ctx.strokeStyle = '#FF0000'; ctx.lineWidth = 1.5;
+                        ctx.clearRect(px - 3, py, 6, tv);
+                        ctx.beginPath(); ctx.setLineDash([4, 4]); ctx.strokeStyle = '#FF0000'; ctx.lineWidth = 2;
                         ctx.moveTo(px, py); ctx.lineTo(px, py + tv); ctx.stroke(); ctx.setLineDash([]);
                     }
 
                     if (vao.tipo === 'JANELA') {
-                        ctx.beginPath(); ctx.strokeStyle = '#28A745'; ctx.lineWidth = 4;
+                        ctx.beginPath(); ctx.strokeStyle = '#28A745'; ctx.lineWidth = 6;
                         if(vao.parede === 'A' || vao.parede === 'C') { ctx.moveTo(px, py); ctx.lineTo(px + tv, py); }
                         else { ctx.moveTo(px, py); ctx.lineTo(px, py + tv); }
                         ctx.stroke();
@@ -450,33 +448,34 @@
                             else { hx = px; hy = py; la = 0; asa = Math.PI/2; aea = 0; ccw = true; }
                         }
 
-                        ctx.strokeStyle = '#007BFF'; ctx.lineWidth = 2;
+                        ctx.strokeStyle = '#007BFF'; ctx.lineWidth = 3;
                         ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(hx + Math.cos(la) * tv, hy + Math.sin(la) * tv); ctx.stroke();
                         ctx.beginPath(); ctx.arc(hx, hy, tv, asa, aea, ccw); ctx.stroke();
                     }
                 });
             }
 
+            // CORREÇÃO BOLINHAS ESPREMIDAS: Deslocadas 22 pixels para o lado de FORA da linha da parede
             pontosTouch = [];
-            let dOff = 0.3 * escala; 
+            const offset = 22; 
 
             const temVao = (par, pos) => dados.vaos.some(v => v.parede === par && v.posLabel === pos);
 
-            pontosTouch.push({ id: 'P', parede: 'A', posLabel: 'INICIO', x: cX + boneca + dOff, y: cY, ocupado: temVao('A', 'INICIO') });
-            pontosTouch.push({ id: 'J', parede: 'A', posLabel: 'MEIO', x: cX + L*0.5, y: cY, ocupado: temVao('A', 'MEIO') });
-            pontosTouch.push({ id: 'P', parede: 'A', posLabel: 'FIM', x: cX + L - boneca - dOff, y: cY, ocupado: temVao('A', 'FIM') });
+            pontosTouch.push({ id: 'P', parede: 'A', posLabel: 'INICIO', x: cX + boneca, y: cY - offset, ocupado: temVao('A', 'INICIO') });
+            pontosTouch.push({ id: 'J', parede: 'A', posLabel: 'MEIO', x: cX + L*0.5, y: cY - offset, ocupado: temVao('A', 'MEIO') });
+            pontosTouch.push({ id: 'P', parede: 'A', posLabel: 'FIM', x: cX + L - boneca, y: cY - offset, ocupado: temVao('A', 'FIM') });
             
-            pontosTouch.push({ id: 'P', parede: 'B', posLabel: 'INICIO', x: cX + L, y: cY + boneca + dOff, ocupado: temVao('B', 'INICIO') });
-            pontosTouch.push({ id: 'J', parede: 'B', posLabel: 'MEIO', x: cX + L, y: cY + C*0.5, ocupado: temVao('B', 'MEIO') });
-            pontosTouch.push({ id: 'P', parede: 'B', posLabel: 'FIM', x: cX + L, y: cY + C - boneca - dOff, ocupado: temVao('B', 'FIM') });
+            pontosTouch.push({ id: 'P', parede: 'B', posLabel: 'INICIO', x: cX + L + offset, y: cY + boneca, ocupado: temVao('B', 'INICIO') });
+            pontosTouch.push({ id: 'J', parede: 'B', posLabel: 'MEIO', x: cX + L + offset, y: cY + C*0.5, ocupado: temVao('B', 'MEIO') });
+            pontosTouch.push({ id: 'P', parede: 'B', posLabel: 'FIM', x: cX + L + offset, y: cY + C - boneca, ocupado: temVao('B', 'FIM') });
             
-            pontosTouch.push({ id: 'P', parede: 'C', posLabel: 'INICIO', x: cX + boneca + dOff, y: cY + C, ocupado: temVao('C', 'INICIO') });
-            pontosTouch.push({ id: 'J', parede: 'C', posLabel: 'MEIO', x: cX + L*0.5, y: cY + C, ocupado: temVao('C', 'MEIO') });
-            pontosTouch.push({ id: 'P', parede: 'C', posLabel: 'FIM', x: cX + L - boneca - dOff, y: cY + C, ocupado: temVao('C', 'FIM') });
+            pontosTouch.push({ id: 'P', parede: 'C', posLabel: 'INICIO', x: cX + boneca, y: cY + C + offset, ocupado: temVao('C', 'INICIO') });
+            pontosTouch.push({ id: 'J', parede: 'C', posLabel: 'MEIO', x: cX + L*0.5, y: cY + C + offset, ocupado: temVao('C', 'MEIO') });
+            pontosTouch.push({ id: 'P', parede: 'C', posLabel: 'FIM', x: cX + L - boneca, y: cY + C + offset, ocupado: temVao('C', 'FIM') });
             
-            pontosTouch.push({ id: 'P', parede: 'D', posLabel: 'INICIO', x: cX, y: cY + boneca + dOff, ocupado: temVao('D', 'INICIO') });
-            pontosTouch.push({ id: 'J', parede: 'D', posLabel: 'MEIO', x: cX, y: cY + C*0.5, ocupado: temVao('D', 'MEIO') });
-            pontosTouch.push({ id: 'P', parede: 'D', posLabel: 'FIM', x: cX, y: cY + C - boneca - dOff, ocupado: temVao('D', 'FIM') });
+            pontosTouch.push({ id: 'P', parede: 'D', posLabel: 'INICIO', x: cX - offset, y: cY + boneca, ocupado: temVao('D', 'INICIO') });
+            pontosTouch.push({ id: 'J', parede: 'D', posLabel: 'MEIO', x: cX - offset, y: cY + C*0.5, ocupado: temVao('D', 'MEIO') });
+            pontosTouch.push({ id: 'P', parede: 'D', posLabel: 'FIM', x: cX - offset, y: cY + C - boneca, ocupado: temVao('D', 'FIM') });
 
             ctx.font = 'bold 11px Arial';
             ctx.textAlign = 'center';
@@ -486,7 +485,7 @@
                 ctx.save();
                 
                 if (pt.ocupado) {
-                    ctx.globalAlpha = 0.2; // Bem clarinho se já tem porta/janela
+                    ctx.globalAlpha = 0.2; // Opacidade translúcida se ocupado
                 } else {
                     ctx.globalAlpha = 1.0;
                 }
@@ -559,21 +558,25 @@
             const ctx = canvasVista.getContext('2d');
             const container = canvasVista.parentElement;
 
-            // CORREÇÃO: Deixa a vista compacta também (~65% da tela)
-            const W = container.clientWidth * 0.65;
-            canvasVista.width = W;
-            canvasVista.style.margin = "0 auto"; 
+            // CORREÇÃO PÉ DIREITO: Limita a altura máxima para não explodir a tela
+            const maxW = container.clientWidth - 20;
+            const maxH = 200; // Trava máxima de altura em pixels
 
             const compParede = (paredeAtual === 'A' || paredeAtual === 'C') ? rascunho.larg : rascunho.comp;
             const altParede = rascunho.alt;
 
-            const esc = (W - 60) / compParede; 
-            canvasVista.height = (altParede * esc) + 80; 
+            // Encontra a escala ideal que cabe tanto na largura quanto na altura limite
+            const esc = Math.min(maxW / compParede, maxH / altParede); 
+            
+            canvasVista.width = (compParede * esc) + 80; // Espaço paras as cotas laterais
+            canvasVista.height = (altParede * esc) + 60; // Espaço para cota topo
+
+            const W = canvasVista.width;
             const H = canvasVista.height;
 
             ctx.clearRect(0,0, W, H);
 
-            const xStart = 20;
+            const xStart = 30;
             const yStart = 40; 
             const xFim = xStart + (compParede * esc);
             const yFim = yStart + (altParede * esc);
@@ -806,12 +809,12 @@
             }
 
             bdProjetos.forEach(amb => {
-                sPisoCompra += amb.pisoCompra; 
-                sParCompra += amb.paredeCompra; 
-                sRodCompra += amb.rodapeCompra;
+                // CORREÇÃO TOTAIS: Filtro contra dados antigos do LocalStorage (NaN)
+                sPisoCompra += (amb.pisoCompra || amb.pisoLiquido || 0); 
+                sParCompra += (amb.paredeCompra || amb.paredeLiquido || 0); 
+                sRodCompra += (amb.rodapeCompra || amb.rodapeLiquido || 0);
             });
 
-            // GERAÇÃO DOS CARDS
             bdProjetos.forEach(amb => {
                 let tv = amb.vaos.length > 0 ? `<br><strong style="color:#D9534F; font-size:0.8rem;">ESPECIFICAÇÕES DOS VÃOS:</strong><br>` : '';
                 amb.vaos.forEach(v => {
@@ -821,19 +824,24 @@
 
                 let margemTexto = amb.margem > 0 ? `(+${amb.margem}%)` : ``;
 
+                // Filtro para não quebrar exibição caso pisoCompra seja undefined em dados antigos
+                let pCompraExibir = (amb.pisoCompra || amb.pisoLiquido).toFixed(2);
+                let parCompraExibir = (amb.paredeCompra || amb.paredeLiquido).toFixed(2);
+                let rodCompraExibir = (amb.rodapeCompra || amb.rodapeLiquido).toFixed(2);
+
                 let htmlResultadoFinal = '';
                 if (amb.tipoCalc === 'AMBOS') {
                     htmlResultadoFinal = `
-                        <span class="destaque-medida destaque-piso">PISO: ${amb.pisoLiquido.toFixed(2)} m² <span class="compra-extra">${margemTexto} = <strong>${amb.pisoCompra.toFixed(2)} m²</strong></span></span>
-                        <span class="destaque-medida destaque-parede">PAREDE: ${amb.paredeLiquido.toFixed(2)} m² <span class="compra-extra">${margemTexto} = <strong>${amb.paredeCompra.toFixed(2)} m²</strong></span></span>
+                        <span class="destaque-medida destaque-piso">PISO: ${amb.pisoLiquido.toFixed(2)} m² <span class="compra-extra">${margemTexto} = <strong>${pCompraExibir} m²</strong></span></span>
+                        <span class="destaque-medida destaque-parede">PAREDE: ${amb.paredeLiquido.toFixed(2)} m² <span class="compra-extra">${margemTexto} = <strong>${parCompraExibir} m²</strong></span></span>
                     `;
                 } else if (amb.tipoCalc === 'PISO') {
-                    htmlResultadoFinal = `<span class="destaque-medida destaque-piso">PISO: ${amb.pisoLiquido.toFixed(2)} m² <span class="compra-extra">${margemTexto} = <strong>${amb.pisoCompra.toFixed(2)} m²</strong></span></span>`;
+                    htmlResultadoFinal = `<span class="destaque-medida destaque-piso">PISO: ${amb.pisoLiquido.toFixed(2)} m² <span class="compra-extra">${margemTexto} = <strong>${pCompraExibir} m²</strong></span></span>`;
                 } else {
-                    htmlResultadoFinal = `<span class="destaque-medida destaque-parede">PAREDE: ${amb.paredeLiquido.toFixed(2)} m² <span class="compra-extra">${margemTexto} = <strong>${amb.paredeCompra.toFixed(2)} m²</strong></span></span>`;
+                    htmlResultadoFinal = `<span class="destaque-medida destaque-parede">PAREDE: ${amb.paredeLiquido.toFixed(2)} m² <span class="compra-extra">${margemTexto} = <strong>${parCompraExibir} m²</strong></span></span>`;
                 }
                 
-                htmlResultadoFinal += `<span class="destaque-medida destaque-rodape">RODAPÉ: ${amb.rodapeLiquido.toFixed(2)} m <span class="compra-extra">${margemTexto} = <strong>${amb.rodapeCompra.toFixed(2)} m</strong></span></span>`;
+                htmlResultadoFinal += `<span class="destaque-medida destaque-rodape">RODAPÉ: ${amb.rodapeLiquido.toFixed(2)} m <span class="compra-extra">${margemTexto} = <strong>${rodCompraExibir} m</strong></span></span>`;
 
                 painel.innerHTML += `
                     <div class="cartao">
@@ -850,7 +858,6 @@
                     </div>`;
             });
 
-            // ATUALIZAÇÃO DO RODAPÉ FIXO AZUL
             document.getElementById('totalPiso').innerText = `${sPisoCompra.toFixed(2)}`;
             document.getElementById('totalParede').innerText = `${sParCompra.toFixed(2)}`;
             document.getElementById('totalRodape').innerText = `${sRodCompra.toFixed(2)}`;
@@ -868,7 +875,7 @@
             document.getElementById('campoComprimento').value = p.c;
             document.getElementById('campoAltura').value = p.a;
             document.getElementById('campoTipo').value = p.tipoCalc;
-            document.getElementById('campoMargem').value = p.margem;
+            document.getElementById('campoMargem').value = p.margem || 0;
 
             document.getElementById('tituloPainelPrincipal').innerText = "EDITANDO: " + p.nome;
             const bS = document.getElementById('btnSalvarAmbiente');
