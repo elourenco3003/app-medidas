@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MEDIDAS VILAREJO PRO 8.4</title>
+    <title>MEDIDAS VILAREJO PRO 8.5</title>
     
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
@@ -17,6 +17,7 @@
             --cor-alerta: #D9534F;
             --cor-sucesso: #5CB85C;
             --cor-borda: #E1E8ED;
+            --cor-destaque: #FF9800;
         }
 
         body { font-family: 'Segoe UI', Roboto, Arial, sans-serif; margin: 0; padding: 10px; background-color: var(--cor-fundo); color: var(--cor-texto); padding-bottom: 90px; }
@@ -25,6 +26,9 @@
         .cabecalho h1 { font-size: 1.3rem; color: var(--cor-principal); margin: 0; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px;}
 
         .cartao { background: var(--cor-cartao); padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.06); margin-bottom: 15px; border: 1px solid var(--cor-borda); }
+        .cartao-resumo { background: #003366; color: #FFF; border: none; box-shadow: 0 6px 15px rgba(0,51,102,0.3);}
+        .cartao-resumo h2 { color: #FFF; border-bottom: 1px solid rgba(255,255,255,0.2); margin-bottom: 15px;}
+        
         h2 { font-size: 1.1rem; margin-top: 0; color: var(--cor-principal); border-bottom: 1px solid #EEE; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;}
 
         .grupo-campo { margin-bottom: 12px; }
@@ -96,12 +100,18 @@
         .destaque-parede { background: #E8F5E9; color: #2E7D32; border-left: 4px solid #2E7D32;}
         .destaque-rodape { background: #FFF3E0; color: #E65100; border-left: 4px solid #E65100; margin-top: 5px;}
         .compra-extra { font-size: 0.75rem; font-weight: normal; color: #555; display: inline-block; margin-left: 5px;}
+
+        /* Grade do Resumo Geral */
+        .grid-resumo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center;}
+        .bloco-resumo-item { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);}
+        .resumo-valor { font-size: 1.6rem; font-weight: 900; display: block; margin-bottom: 5px;}
+        .resumo-label { font-size: 0.7rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px;}
     </style>
 </head>
 <body>
 
     <div class="cabecalho">
-        <h1><span class="material-symbols-outlined" style="font-size: 24px;">architecture</span> VILAREJO PRO 8.4</h1>
+        <h1><span class="material-symbols-outlined" style="font-size: 24px;">architecture</span> VILAREJO PRO 8.5</h1>
     </div>
 
     <div class="cartao" id="painelPrincipal">
@@ -416,10 +426,9 @@
                         py = cY + C;
                     } else if (vao.parede === 'D') {
                         px = cX;
-                        if (vao.posLabel === 'INICIO') px = cX + boneca;
-                        else if (vao.posLabel === 'FIM') px = cX + L - boneca - tv;
-                        else px = cX + (L - tv) / 2;
-                        py = cY + C;
+                        if (vao.posLabel === 'INICIO') py = cY + boneca;
+                        else if (vao.posLabel === 'FIM') py = cY + C - boneca - tv;
+                        else py = cY + (C - tv) / 2;
                     }
 
                     if (vao.parede === 'A' || vao.parede === 'C') {
@@ -451,7 +460,7 @@
                             if (direita) { hx = px; hy = py; la = -Math.PI/2; asa = 0; aea = -Math.PI/2; ccw = true; }
                             else { hx = px + tv; hy = py; la = -Math.PI/2; asa = Math.PI; aea = -Math.PI/2; ccw = false; }
                         } else if (vao.parede === 'D') { 
-                            if (direita) { hx = px; hy = py; la = 0; asa = -Math.PI/2; aea = 0; ccw = false; }
+                            if (direita) { hx = px; hy = py + tv; la = 0; asa = -Math.PI/2; aea = 0; ccw = false; }
                             else { hx = px; hy = py; la = 0; asa = Math.PI/2; aea = 0; ccw = true; }
                         }
 
@@ -462,14 +471,12 @@
                 });
             }
 
-            // Balões (VISTAS INTERATIVAS)
             pontosTouch = [];
             let dOff = 0.3 * escala; 
 
-            // Função auxiliar para verificar se já existe um vão neste ponto (regra V8.3)
             const temVao = (par, pos) => dados.vaos.some(v => v.parede === par && v.posLabel === pos);
 
-            // V8.4: Sempre adiciona todos os pontos, mas marca se está ocupado
+            // Adiciona todos os pontos na array com a flag 'ocupado'
             pontosTouch.push({ id: 'P', parede: 'A', posLabel: 'INICIO', x: cX + boneca + dOff, y: cY, ocupado: temVao('A', 'INICIO') });
             pontosTouch.push({ id: 'J', parede: 'A', posLabel: 'MEIO', x: cX + L*0.5, y: cY, ocupado: temVao('A', 'MEIO') });
             pontosTouch.push({ id: 'P', parede: 'A', posLabel: 'FIM', x: cX + L - boneca - dOff, y: cY, ocupado: temVao('A', 'FIM') });
@@ -491,12 +498,13 @@
             ctx.textBaseline = 'middle';
 
             pontosTouch.forEach(pt => {
-                // V8.4: Aplica opacidade baseada no status ocupado
-                ctx.save(); // Salva estado normal
+                ctx.save();
+                
+                // Se estiver ocupado, deixa a bolinha bem clara (transparente)
                 if (pt.ocupado) {
-                    ctx.globalAlpha = 0.2; // Fica bem clarinho
+                    ctx.globalAlpha = 0.3;
                 } else {
-                    ctx.globalAlpha = 1.0; // Normal
+                    ctx.globalAlpha = 1.0;
                 }
 
                 ctx.beginPath();
@@ -508,8 +516,8 @@
                 ctx.stroke();
                 ctx.fillStyle = '#FFF';
                 ctx.fillText(pt.id, pt.x, pt.y);
-
-                ctx.restore(); // Restaura estado normal
+                
+                ctx.restore();
             });
         };
 
@@ -696,6 +704,13 @@
             
             if (!largV || !altV) return alert("INFORME LARGURA E ALTURA.");
 
+            // REGRA DE SEGURANÇA: Validar se o vão não é maior que a parede
+            let limiteParede = (par === 'A' || par === 'C') ? rascunho.larg : rascunho.comp;
+            if (largV > limiteParede) {
+                alert(`A largura do vão (${largV}m) não pode ser maior que o tamanho da Parede ${par} (${limiteParede}m).`);
+                return;
+            }
+
             let abert = null, aduela = null, aLarg = null, aCorte = null;
             if (tipo === 'PORTA') {
                 abert = document.getElementById('modalAberturaPorta').value;
@@ -731,7 +746,7 @@
                 if(v.tipo === 'PORTA') dRod += v.larg;
             });
 
-            let fPiso = (tCalc === 'PISO' || tCalc === 'AMBOS' || tCalc === 'APENAS_PISO') ? aChao : 0;
+            let fPiso = (tCalc === 'PISO' || tCalc === 'AMBOS') ? aChao : 0;
             let fPar = (tCalc === 'PAREDE' || tCalc === 'AMBOS') ? Math.max(0, aPar - dPar) : 0;
             let fRod = Math.max(0, per - dRod);
 
@@ -791,11 +806,42 @@
             painel.innerHTML = "";
             let sPisoCompra = 0, sParCompra = 0, sRodCompra = 0;
 
+            if (bdProjetos.length === 0) {
+                document.getElementById('totalPiso').innerText = `0.00`;
+                document.getElementById('totalParede').innerText = `0.00`;
+                document.getElementById('totalRodape').innerText = `0.00`;
+                return;
+            }
+
+            // NOVA FUNÇÃO: Resumo Geral no topo da lista
             bdProjetos.forEach(amb => {
                 sPisoCompra += amb.pisoCompra; 
                 sParCompra += amb.paredeCompra; 
                 sRodCompra += amb.rodapeCompra;
+            });
 
+            // Adiciona o Card de Resumo Geral
+            painel.innerHTML += `
+                <div class="cartao cartao-resumo">
+                    <h2><span class="material-symbols-outlined">analytics</span> RESUMO TOTAL DA OBRA</h2>
+                    <div class="grid-resumo">
+                        <div class="bloco-resumo-item">
+                            <span class="resumo-valor">${sPisoCompra.toFixed(2)} m²</span>
+                            <span class="resumo-label">TOTAL PISO</span>
+                        </div>
+                        <div class="bloco-resumo-item">
+                            <span class="resumo-valor">${sParCompra.toFixed(2)} m²</span>
+                            <span class="resumo-label">TOTAL PAREDE</span>
+                        </div>
+                        <div class="bloco-resumo-item" style="grid-column: span 2;">
+                            <span class="resumo-valor" style="color: var(--cor-destaque);">${sRodCompra.toFixed(2)} m</span>
+                            <span class="resumo-label">TOTAL RODAPÉ LINEAR</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            bdProjetos.forEach(amb => {
                 let tv = amb.vaos.length > 0 ? `<br><strong style="color:#D9534F; font-size:0.8rem;">ESPECIFICAÇÕES DOS VÃOS:</strong><br>` : '';
                 amb.vaos.forEach(v => {
                     if (v.tipo === 'PORTA') tv += `<span style="font-size:0.8rem; color:#555;">- PORTA (P. ${v.parede}): ${v.larg.toFixed(2)}x${v.alt.toFixed(2)}m | ${v.abert} | ADUELA: ${v.aduela}cm | ALIZAR: ${v.alizarLarg} (${v.alizarCorte})</span><br>`;
