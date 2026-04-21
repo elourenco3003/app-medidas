@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MEDIDAS VILAREJO PRO 8.7</title>
+    <title>MEDIDAS VILAREJO PRO 8.8</title>
     
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
@@ -38,7 +38,6 @@
         input[type="text"] { text-transform: uppercase; }
         input:focus, select:focus { border-color: var(--cor-secundaria); outline: none; background-color: #FFF; box-shadow: 0 0 0 3px rgba(0,85,164,0.1);}
 
-        /* Botões Base */
         button { width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; text-transform: uppercase; margin-top: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; transition: transform 0.1s, filter 0.2s;}
         button:active { transform: scale(0.98); filter: brightness(0.9);}
         
@@ -46,20 +45,18 @@
         .botao-sucesso { background-color: var(--cor-sucesso); color: white; }
         .botao-fechar { background-color: #6c757d; color: white; }
         
-        /* Botões de Ação (Ícones) */
         .acoes-lista { display: flex; gap: 8px; }
         .botao-icone { width: 36px; height: 36px; padding: 0; border-radius: 6px; color: white; margin: 0; display: flex; justify-content: center; align-items: center;}
         .botao-icone.edit { background-color: #FF9800; }
         .botao-icone.delete { background-color: var(--cor-alerta); }
         .material-symbols-outlined { font-size: 20px; }
 
-        /* Select e Botão + */
         .select-container { display: flex; gap: 8px; align-items: center; }
         .btn-add-ambiente { width: 50px; height: 48px; padding: 0; font-size: 1.5rem; border: 2px dashed var(--cor-secundaria); background: #F0F4F8; color: var(--cor-secundaria); border-radius: 8px; margin: 0;}
 
-        /* Canvas Geral */
+        /* Canvas Geral - Centralizado e Proporcional */
         .area-desenho-container { width: 100%; text-align: center; margin-top: 15px; background: #FFF; border: 2px solid var(--cor-borda); border-radius: 8px; overflow: hidden; position: relative;}
-        canvas { margin: 0 auto; display: block; touch-action: none; background-image: radial-gradient(#E1E8ED 1px, transparent 1px); background-size: 20px 20px; width: 100%;}
+        canvas { margin: 0 auto; display: block; touch-action: none; background-image: radial-gradient(#E1E8ED 1px, transparent 1px); background-size: 20px 20px;}
         .instrucao-canvas { font-size: 0.8rem; color: #FFF; padding: 10px; background: var(--cor-secundaria); font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 6px;}
 
         /* CARROSSEL DE VISTAS */
@@ -70,11 +67,9 @@
         .btn-nav-vista:active { background: #E1E8ED;}
         .btn-nav-vista .material-symbols-outlined { font-size: 24px; }
         
-        /* Modais */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,30,60,0.8); z-index: 2000; justify-content: center; align-items: center; padding: 15px; box-sizing: border-box;}
         .modal-conteudo { background: #FFF; padding: 20px; border-radius: 12px; width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto;}
 
-        /* UI Porta */
         .seletor-abertura { background: #F8F9FA; padding: 12px; border-radius: 8px; border: 1px solid #DDD; margin-bottom: 15px; text-align: center; }
         .seletor-abertura label { color: var(--cor-principal); font-size: 0.75rem; text-transform: uppercase; margin-bottom: 10px;}
         .grid-abertura { display: flex; align-items: center; justify-content: center; gap: 10px; }
@@ -82,11 +77,9 @@
         .btn-abertura.ativo { border-color: var(--cor-principal); background: #E8F0FE; color: var(--cor-principal); font-weight: 800;}
         .img-abertura { height: 75px; object-fit: contain; border-radius: 4px;}
 
-        /* Lista Rascunho */
         .item-rascunho-vao { background: #FFF; padding: 12px; margin-top: 10px; border-left: 4px solid var(--cor-secundaria); display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid var(--cor-borda);}
         .detalhe-vao-texto { display: flex; flex-direction: column; gap: 3px; }
 
-        /* Rodapé Fixo */
         .rodape-totais { position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--cor-principal); color: white; padding: 12px 5px; box-shadow: 0 -4px 15px rgba(0,0,0,0.2); box-sizing: border-box; display: grid; grid-template-columns: 1fr 1fr 1fr; text-align: center; z-index: 1000; }
         .bloco-total { border-right: 1px solid rgba(255,255,255,0.2); padding: 0 5px;}
         .bloco-total:last-child { border-right: none; }
@@ -103,7 +96,7 @@
 <body>
 
     <div class="cabecalho">
-        <h1><span class="material-symbols-outlined" style="font-size: 24px;">architecture</span> VILAREJO PRO 8.7</h1>
+        <h1><span class="material-symbols-outlined" style="font-size: 24px;">architecture</span> VILAREJO PRO 8.8</h1>
     </div>
 
     <div class="cartao" id="painelPrincipal">
@@ -151,7 +144,7 @@
             </div>
             <div class="grupo-campo coluna" style="flex: 1;">
                 <label>QUEBRA (%)</label>
-                <input type="number" id="campoMargem" step="1" value="10" placeholder="10">
+                <input type="number" id="campoMargem" step="1" value="10" placeholder="10" oninput="window.agendarAtualizacao()">
             </div>
         </div>
 
@@ -175,7 +168,7 @@
                         <span class="material-symbols-outlined">chevron_right</span>
                     </button>
                 </div>
-                <canvas id="telaVistaInterativa" style="width: 100%; display: block;"></canvas>
+                <canvas id="telaVistaInterativa"></canvas>
             </div>
 
             <div id="listaVaosRascunho" style="margin-top: 15px;"></div>
@@ -362,15 +355,16 @@
             const ctx = canvas.getContext('2d');
             const container = canvas.parentElement;
             
+            // CORREÇÃO: Força o canvas a ter cerca de 55% da tela para ficar bonito e compacto
             const containerW = container.clientWidth; 
-            canvas.width = containerW; 
-            canvas.height = canvas.width * 0.8; 
+            canvas.width = containerW * 0.55; 
+            canvas.height = canvas.width * 1.2; 
 
             const W = canvas.width;
             const H = canvas.height;
             ctx.clearRect(0, 0, W, H);
 
-            const margemX = W * 0.15;
+            const margemX = W * 0.20;
             const margemY = H * 0.15;
             
             const propX = (W - margemX * 2) / dados.larg;
@@ -384,7 +378,7 @@
             const boneca = 0.10 * escala;
 
             ctx.strokeStyle = '#4A4A4A';
-            ctx.lineWidth = 6;
+            ctx.lineWidth = 4;
             ctx.strokeRect(cX, cY, L, C);
 
             ctx.fillStyle = '#999';
@@ -424,17 +418,17 @@
                     }
 
                     if (vao.parede === 'A' || vao.parede === 'C') {
-                        ctx.clearRect(px, py - 3, tv, 6);
-                        ctx.beginPath(); ctx.setLineDash([4, 4]); ctx.strokeStyle = '#FF0000'; ctx.lineWidth = 2;
+                        ctx.clearRect(px, py - 2, tv, 4);
+                        ctx.beginPath(); ctx.setLineDash([4, 4]); ctx.strokeStyle = '#FF0000'; ctx.lineWidth = 1.5;
                         ctx.moveTo(px, py); ctx.lineTo(px + tv, py); ctx.stroke(); ctx.setLineDash([]);
                     } else {
-                        ctx.clearRect(px - 3, py, 6, tv);
-                        ctx.beginPath(); ctx.setLineDash([4, 4]); ctx.strokeStyle = '#FF0000'; ctx.lineWidth = 2;
+                        ctx.clearRect(px - 2, py, 4, tv);
+                        ctx.beginPath(); ctx.setLineDash([4, 4]); ctx.strokeStyle = '#FF0000'; ctx.lineWidth = 1.5;
                         ctx.moveTo(px, py); ctx.lineTo(px, py + tv); ctx.stroke(); ctx.setLineDash([]);
                     }
 
                     if (vao.tipo === 'JANELA') {
-                        ctx.beginPath(); ctx.strokeStyle = '#28A745'; ctx.lineWidth = 6;
+                        ctx.beginPath(); ctx.strokeStyle = '#28A745'; ctx.lineWidth = 4;
                         if(vao.parede === 'A' || vao.parede === 'C') { ctx.moveTo(px, py); ctx.lineTo(px + tv, py); }
                         else { ctx.moveTo(px, py); ctx.lineTo(px, py + tv); }
                         ctx.stroke();
@@ -456,7 +450,7 @@
                             else { hx = px; hy = py; la = 0; asa = Math.PI/2; aea = 0; ccw = true; }
                         }
 
-                        ctx.strokeStyle = '#007BFF'; ctx.lineWidth = 3;
+                        ctx.strokeStyle = '#007BFF'; ctx.lineWidth = 2;
                         ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(hx + Math.cos(la) * tv, hy + Math.sin(la) * tv); ctx.stroke();
                         ctx.beginPath(); ctx.arc(hx, hy, tv, asa, aea, ccw); ctx.stroke();
                     }
@@ -484,26 +478,25 @@
             pontosTouch.push({ id: 'J', parede: 'D', posLabel: 'MEIO', x: cX, y: cY + C*0.5, ocupado: temVao('D', 'MEIO') });
             pontosTouch.push({ id: 'P', parede: 'D', posLabel: 'FIM', x: cX, y: cY + C - boneca - dOff, ocupado: temVao('D', 'FIM') });
 
-            ctx.font = 'bold 12px Arial';
+            ctx.font = 'bold 11px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 
             pontosTouch.forEach(pt => {
                 ctx.save();
                 
-                // Se ocupado, transparência
                 if (pt.ocupado) {
-                    ctx.globalAlpha = 0.3;
+                    ctx.globalAlpha = 0.2; // Bem clarinho se já tem porta/janela
                 } else {
                     ctx.globalAlpha = 1.0;
                 }
 
                 ctx.beginPath();
-                ctx.arc(pt.x, pt.y, 14, 0, Math.PI * 2);
+                ctx.arc(pt.x, pt.y, 12, 0, Math.PI * 2);
                 ctx.fillStyle = pt.id === 'P' ? '#007BFF' : '#28A745'; 
                 ctx.fill();
                 ctx.strokeStyle = '#FFF';
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 1.5;
                 ctx.stroke();
                 ctx.fillStyle = '#FFF';
                 ctx.fillText(pt.id, pt.x, pt.y);
@@ -566,31 +559,33 @@
             const ctx = canvasVista.getContext('2d');
             const container = canvasVista.parentElement;
 
-            const W = container.clientWidth;
+            // CORREÇÃO: Deixa a vista compacta também (~65% da tela)
+            const W = container.clientWidth * 0.65;
             canvasVista.width = W;
+            canvasVista.style.margin = "0 auto"; 
 
             const compParede = (paredeAtual === 'A' || paredeAtual === 'C') ? rascunho.larg : rascunho.comp;
             const altParede = rascunho.alt;
 
-            const esc = (W - 80) / compParede; 
+            const esc = (W - 60) / compParede; 
             canvasVista.height = (altParede * esc) + 80; 
             const H = canvasVista.height;
 
             ctx.clearRect(0,0, W, H);
 
-            const xStart = 30;
+            const xStart = 20;
             const yStart = 40; 
             const xFim = xStart + (compParede * esc);
             const yFim = yStart + (altParede * esc);
 
             ctx.strokeStyle = '#4A4A4A';
-            ctx.lineWidth = 4;
+            ctx.lineWidth = 3;
             ctx.strokeRect(xStart, yStart, compParede * esc, altParede * esc);
 
             ctx.beginPath();
-            ctx.moveTo(10, yFim);
-            ctx.lineTo(W - 10, yFim);
-            ctx.lineWidth = 4;
+            ctx.moveTo(5, yFim);
+            ctx.lineTo(W - 5, yFim);
+            ctx.lineWidth = 3;
             ctx.stroke();
 
             window.desenharCota(ctx, xFim + 15, yStart, xFim + 15, yFim, `${altParede.toFixed(2)}m`, false);
@@ -611,18 +606,18 @@
                 if (v.tipo === 'PORTA') {
                     py = yFim - th;
                     ctx.fillStyle = '#E8F0FE'; ctx.fillRect(px, py, tv, th);
-                    ctx.strokeStyle = '#007BFF'; ctx.lineWidth = 2; ctx.strokeRect(px, py, tv, th);
+                    ctx.strokeStyle = '#007BFF'; ctx.lineWidth = 1.5; ctx.strokeRect(px, py, tv, th);
                     window.desenharCota(ctx, px, py - 10, px + tv, py - 10, v.larg.toFixed(2), true);
-                    window.desenharCota(ctx, px + tv + 10, py, px + tv + 10, yFim, v.alt.toFixed(2), false);
+                    window.desenharCota(ctx, px + tv + 8, py, px + tv + 8, yFim, v.alt.toFixed(2), false);
 
                 } else {
                     let topo = altParede >= 2.10 ? 2.10 : altParede - 0.1;
                     py = yFim - (topo * esc);
                     
                     ctx.fillStyle = '#E8F5E9'; ctx.fillRect(px, py, tv, th);
-                    ctx.strokeStyle = '#28A745'; ctx.lineWidth = 2; ctx.strokeRect(px, py, tv, th);
+                    ctx.strokeStyle = '#28A745'; ctx.lineWidth = 1.5; ctx.strokeRect(px, py, tv, th);
                     window.desenharCota(ctx, px, py - 10, px + tv, py - 10, v.larg.toFixed(2), true);
-                    window.desenharCota(ctx, px + tv + 10, py, px + tv + 10, py + th, v.alt.toFixed(2), false);
+                    window.desenharCota(ctx, px + tv + 8, py, px + tv + 8, py + th, v.alt.toFixed(2), false);
                 }
             });
         };
@@ -636,7 +631,7 @@
 
             pontosTouch.forEach(pt => {
                 const dist = Math.sqrt(Math.pow(cx - pt.x, 2) + Math.pow(cy - pt.y, 2));
-                if (dist < 25) window.abrirModalVao(pt.id, pt.parede, pt.posLabel);
+                if (dist < 20) window.abrirModalVao(pt.id, pt.parede, pt.posLabel);
             });
         });
 
@@ -695,7 +690,6 @@
             
             if (!largV || !altV) return alert("INFORME LARGURA E ALTURA.");
 
-            // REGRA DE SEGURANÇA: Validar limites da parede (Largura e Altura)
             let limiteLargura = (par === 'A' || par === 'C') ? rascunho.larg : rascunho.comp;
             let limiteAltura = rascunho.alt;
 
@@ -817,6 +811,7 @@
                 sRodCompra += amb.rodapeCompra;
             });
 
+            // GERAÇÃO DOS CARDS
             bdProjetos.forEach(amb => {
                 let tv = amb.vaos.length > 0 ? `<br><strong style="color:#D9534F; font-size:0.8rem;">ESPECIFICAÇÕES DOS VÃOS:</strong><br>` : '';
                 amb.vaos.forEach(v => {
@@ -855,7 +850,7 @@
                     </div>`;
             });
 
-            // ATUALIZAÇÃO DO RODAPÉ FIXO COM O TOTAL DE COMPRA
+            // ATUALIZAÇÃO DO RODAPÉ FIXO AZUL
             document.getElementById('totalPiso').innerText = `${sPisoCompra.toFixed(2)}`;
             document.getElementById('totalParede').innerText = `${sParCompra.toFixed(2)}`;
             document.getElementById('totalRodape').innerText = `${sRodCompra.toFixed(2)}`;
